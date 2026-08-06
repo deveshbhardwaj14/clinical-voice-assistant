@@ -15,7 +15,7 @@ import {
 import {
     ArrowDownloadRegular,
     CalendarRegular,
-    MedicalRegular,
+    ClipboardRegular,
     NoteRegular,
     PillRegular,
 } from '@fluentui/react-icons'
@@ -107,7 +107,7 @@ export function PatientSummaryPanel({ summary, visitType, onDownload }: Props) {
         <CardHeader
           header={
             <Text className={styles.sectionTitle}>
-              <MedicalRegular />
+              <ClipboardRegular />
               &nbsp;About Today&apos;s Visit
             </Text>
           }

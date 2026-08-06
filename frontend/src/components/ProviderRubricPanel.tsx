@@ -32,7 +32,15 @@ const CRITERION_LABELS: Record<string, string> = {
   pronunciation_and_pacing: 'Pronunciation & Pacing',
 }
 
-function scoreColor(score: number, max: number): 'success' | 'warning' | 'danger' {
+// ProgressBar accepts 'error'; Badge accepts 'danger' — kept separate
+function progressColor(score: number, max: number): 'success' | 'warning' | 'error' {
+  const pct = max > 0 ? score / max : 0
+  if (pct >= 0.8) return 'success'
+  if (pct >= 0.5) return 'warning'
+  return 'error'
+}
+
+function badgeColor(score: number, max: number): 'success' | 'warning' | 'danger' {
   const pct = max > 0 ? score / max : 0
   if (pct >= 0.8) return 'success'
   if (pct >= 0.5) return 'warning'
@@ -146,7 +154,7 @@ export function ProviderRubricPanel({ assessment }: Props) {
         </div>
         <ProgressBar
           value={scaleMax > 0 ? overallScore / scaleMax : 0}
-          color={scoreColor(overallScore, scaleMax)}
+          color={progressColor(overallScore, scaleMax)}
           thickness="large"
         />
       </div>
@@ -175,14 +183,14 @@ export function ProviderRubricPanel({ assessment }: Props) {
                   <div className={styles.criterionNameRow}>
                     <Text weight="semibold">{label}</Text>
                     <Badge
-                      color={scoreColor(c.score, max)}
+                      color={badgeColor(c.score, max)}
                       appearance="filled"
                       size="medium"
                     >
                       {c.score} / {max}
                     </Badge>
                   </div>
-                  <ProgressBar value={c.score / max} color={scoreColor(c.score, max)} />
+                  <ProgressBar value={c.score / max} color={progressColor(c.score, max)} />
                   {c.justification && (
                     <Text className={styles.explanation}>{c.justification}</Text>
                   )}
@@ -233,7 +241,7 @@ export function ProviderRubricPanel({ assessment }: Props) {
                       <Text weight="semibold">
                         {CRITERION_LABELS[entry.criterion_id ?? entry.criterion] ?? entry.criterion}
                       </Text>
-                      <Badge color={scoreColor(entry.score, entry.max_score)} appearance="outline" size="small">
+                      <Badge color={badgeColor(entry.score, entry.max_score)} appearance="outline" size="small">
                         {entry.score} / {entry.max_score}
                       </Badge>
                     </div>
