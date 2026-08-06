@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogSurface,
-  makeStyles,
-  Spinner,
-  Text,
-  tokens,
+    Button,
+    Dialog,
+    DialogBody,
+    DialogSurface,
+    makeStyles,
+    Spinner,
+    Text,
+    tokens,
 } from '@fluentui/react-components'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AssessmentPanel } from '../components/AssessmentPanel'
@@ -21,9 +21,9 @@ import { ConversationList } from '../components/ConversationList'
 import { ScenarioList } from '../components/ScenarioList'
 import { UserHeader } from '../components/UserHeader'
 import {
-  AvatarConnectionDiagnostics,
-  ConnectionStage,
-  VideoPanel,
+    AvatarConnectionDiagnostics,
+    ConnectionStage,
+    VideoPanel,
 } from '../components/VideoPanel'
 import { useAudioPlayer } from '../hooks/useAudioPlayer'
 import { useAuth } from '../hooks/useAuth'
@@ -34,7 +34,7 @@ import { useWebRTC } from '../hooks/useWebRTC'
 import { api, AvatarConfig, parseAvatarValue } from '../services/api'
 import { Assessment } from '../types'
 
-type AppView = 'setup' | 'practice' | 'conversations' | 'conversationDetail'
+type AppView = 'setup' | 'practice' | 'results' | 'conversations' | 'conversationDetail'
 const RELEASE_VERSION = 'v0.0.2'
 
 const useStyles = makeStyles({
@@ -96,6 +96,26 @@ const useStyles = makeStyles({
     zIndex: 1000,
     userSelect: 'none',
   },
+  resultsLayout: {
+    width: '95%',
+    maxWidth: '1400px',
+    height: '90vh',
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: tokens.spacingHorizontalL,
+  },
+  resultsPanel: {
+    height: '100%',
+    overflowY: 'auto',
+    padding: tokens.spacingVerticalM,
+  },
+  transcriptPanel: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    overflowY: 'hidden',
+  },
 })
 
 export default function App() {
@@ -118,7 +138,13 @@ export default function App() {
     string | null
   >(null)
   const [showAllPractices, setShowAllPractices] = useState(false)
-  const [appName, setAppName] = useState<string>('Live Voice Practice')
+  const [appName, setAppName] = useState<string>('Clinical Voice Assistant')
+
+  // Clinical session state
+  const [patientLanguage, setPatientLanguage] = useState<string>('en')
+  const [simplifiedEntries, setSimplifiedEntries] = useState<SimplifiedTranscriptEntry[]>([])
+  const [patientSummary, setPatientSummary] = useState<PatientSummary | null>(null)
+  const [providerAssessment, setProviderAssessment] = useState<Assessment | null>(null)
 
   const { authenticated, user, isTrainer } = useAuth()
 
@@ -296,6 +322,31 @@ export default function App() {
     scenarioId: selectedScenario,
     onMessage: handleWebRTCMessage,
     onAudioDelta: playAudio,
+    onTranscript: useCallback(
+      (role: 'user' | 'assistant', text: string) => {
+        const speaker = role === 'assistant' ? 'doctor' : 'patient'
+        const entry: SimplifiedTranscriptEntry = {
+          id: `${Date.now()}-${Math.random()}`,
+          speaker,
+          originalText: text,
+          simplifiedText: text,
+          timestamp: new Date(),
+        }
+        setSimplifiedEntries(prev => [...prev, entry])
+        // Simplify asynchronously and update the entry in place
+        if (speaker === 'doctor' && text.trim()) {
+          api
+            .simplifyTranscript(text, 'plain', patientLanguage)
+            .then(simplified => {
+              setSimplifiedEntries(prev =>
+                prev.map(e => (e.id === entry.id ? { ...e, simplifiedText: simplified } : e))
+              )
+            })
+            .catch(() => {/* simplification is best-effort */})
+        }
+      },
+      [patientLanguage]
+    ),
     onConnectionStatus: updateAvatarDiagnostics,
   })
 
@@ -416,6 +467,65 @@ export default function App() {
     setShowAssessment(true)
   }, [])
 
+  const handleEndVisit = useCallback(async () => {
+    if (recording) {
+      stopRecording()
+    }
+
+    const recordings = getRecordings()
+    if (!recordings.conversation.length || !selectedScenario) return
+
+    setShowLoading(true)
+    setAnalysisError(null)
+
+    try {
+      const transcript = recordings.conversation
+        .map((m: any) => `${m.role}: ${m.content}`)
+        .join('\n')
+      const visitTypeName =
+        scenarios.find(s => s.id === selectedScenario)?.name ?? 'General Consultation'
+      const conversationId = currentAgent
+        ? getConversationId()
+        : await saveConversationNow()
+
+      const [summaryResult, rubricResult] = await Promise.allSettled([
+        api.generatePatientSummary(transcript, patientLanguage, visitTypeName),
+        api.analyzeConversation(
+          selectedScenario,
+          transcript,
+          [],
+          recordings.conversation,
+          conversationId,
+          currentAgent
+        ),
+      ])
+
+      if (summaryResult.status === 'fulfilled') {
+        setPatientSummary(summaryResult.value)
+      }
+      if (rubricResult.status === 'fulfilled') {
+        setProviderAssessment(rubricResult.value)
+      }
+
+      setCurrentView('results')
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : 'Unknown error'
+      setAnalysisError(`Post-visit analysis failed. ${detail}`)
+    } finally {
+      setShowLoading(false)
+    }
+  }, [
+    currentAgent,
+    getConversationId,
+    getRecordings,
+    patientLanguage,
+    recording,
+    saveConversationNow,
+    scenarios,
+    selectedScenario,
+    stopRecording,
+  ])
+
   return (
     <div className={styles.container}>
       <UserHeader
@@ -472,14 +582,14 @@ export default function App() {
                 block
                 style={{ marginTop: tokens.spacingVerticalL }}
               >
-                Analyzing Performance...
+                Generating Visit Artifacts...
               </Text>
               <Text
                 size={200}
                 block
                 style={{ marginTop: tokens.spacingVerticalS }}
               >
-                This may take a few moments
+                Preparing patient summary and provider rubric — this may take a moment
               </Text>
             </div>
           </DialogBody>
@@ -528,7 +638,7 @@ export default function App() {
         </DialogSurface>
       </Dialog>
 
-      {/* Practice view */}
+      {/* Practice view — ambient session with live patient transcript */}
       {currentView === 'practice' && (
         <div className={styles.mainLayout}>
           {avatarEnabled && (
@@ -540,6 +650,12 @@ export default function App() {
               />
             </div>
           )}
+          <div className={styles.transcriptPanel}>
+            <PatientTranscriptPanel
+              entries={simplifiedEntries}
+              isListening={recording}
+            />
+          </div>
           <ChatPanel
             messages={messages}
             recording={recording}
@@ -549,7 +665,7 @@ export default function App() {
             canAnalyze={messages.length > 0 && !recording}
             onToggleRecording={toggleRecording}
             onClear={clearMessages}
-            onAnalyze={handleAnalyze}
+            onAnalyze={handleEndVisit}
             scenario={activeScenario}
             avatarEnabled={showAvatar}
             onToggleAvatar={() => setShowAvatar(prev => !prev)}
@@ -559,6 +675,36 @@ export default function App() {
             isTrainer={isTrainer}
             onNavigateToAllPractices={navigateToAllPractices}
           />
+        </div>
+      )}
+
+      {/* Results view — post-visit patient summary + provider rubric */}
+      {currentView === 'results' && (
+        <div className={styles.resultsLayout}>
+          <div className={styles.resultsPanel}>
+            {patientSummary ? (
+              <PatientSummaryPanel
+                summary={patientSummary}
+                visitType={
+                  scenarios.find(s => s.id === selectedScenario)?.name ??
+                  'General Consultation'
+                }
+              />
+            ) : (
+              <Text style={{ color: tokens.colorNeutralForeground3 }}>
+                Patient summary not available.
+              </Text>
+            )}
+          </div>
+          <div className={styles.resultsPanel}>
+            {providerAssessment ? (
+              <ProviderRubricPanel assessment={providerAssessment} />
+            ) : (
+              <Text style={{ color: tokens.colorNeutralForeground3 }}>
+                Provider rubric not available.
+              </Text>
+            )}
+          </div>
         </div>
       )}
 

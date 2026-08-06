@@ -155,3 +155,90 @@ export interface ConversationDetailData {
   created_at: string
   updated_at: string
 }
+
+// ---------------------------------------------------------------------------
+// Clinical Voice Assistant types
+// ---------------------------------------------------------------------------
+
+/** Supported reading levels for live transcript simplification. */
+export type ReadingLevel = 'plain' | 'grade_5' | 'grade_8'
+
+/** A single entry in the live patient-facing transcript. */
+export interface SimplifiedTranscriptEntry {
+  id: string
+  speaker: 'doctor' | 'patient'
+  /** Original text as captured from audio. */
+  originalText: string
+  /** Simplified (and optionally translated) text shown to the patient. */
+  simplifiedText: string
+  timestamp: Date
+}
+
+/** Post-visit patient summary returned by POST /api/analyze/patient-summary. */
+export interface PatientSummary {
+  visit_reason: string
+  what_was_discussed: string[]
+  diagnosis_or_findings: string
+  medications: Array<{
+    name: string
+    purpose: string
+    instructions: string
+  }>
+  next_steps: string[]
+  follow_up: string
+  questions_to_ask_next_time: string[]
+}
+
+/** Visit type options used in session setup. */
+export interface VisitType {
+  id: string
+  name: string
+  description: string
+}
+
+export const VISIT_TYPES: VisitType[] = [
+  {
+    id: 'general-consultation',
+    name: 'General Consultation',
+    description: 'Routine visit for general health concerns',
+  },
+  {
+    id: 'follow-up',
+    name: 'Follow-Up Visit',
+    description: 'Post-treatment or post-surgery check-in',
+  },
+  {
+    id: 'new-patient',
+    name: 'New Patient Intake',
+    description: 'First appointment with a new patient',
+  },
+  {
+    id: 'specialist',
+    name: 'Specialist Consultation',
+    description: 'Referred specialist assessment',
+  },
+  {
+    id: 'urgent-care',
+    name: 'Urgent Care Visit',
+    description: 'Unscheduled visit for an acute concern',
+  },
+]
+
+/** Languages available for patient transcript and summary. */
+export interface PatientLanguageOption {
+  code: string
+  label: string
+}
+
+export const PATIENT_LANGUAGES: PatientLanguageOption[] = [
+  { code: 'en', label: 'English' },
+  { code: 'es', label: 'Spanish' },
+  { code: 'fr', label: 'French' },
+  { code: 'zh', label: 'Chinese (Simplified)' },
+  { code: 'ar', label: 'Arabic' },
+  { code: 'hi', label: 'Hindi' },
+  { code: 'pt', label: 'Portuguese' },
+  { code: 'ru', label: 'Russian' },
+  { code: 'ko', label: 'Korean' },
+  { code: 'ja', label: 'Japanese' },
+]

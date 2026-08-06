@@ -83,7 +83,7 @@ Write-Host ""
 #endregion
 
 #region Read values from App Configuration
-$label = "live-voice-practice"
+$label = "clinical-voice-assistant"
 Write-Blue "Loading values from App Configuration (label=$label)..."
 
 function Get-ConfigValue {

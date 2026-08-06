@@ -298,7 +298,7 @@ class Config:
                 env_var="APP_DISPLAY_NAME",
                 app_config=app_config_values,
                 app_config_key="APP_DISPLAY_NAME",
-                default="Live Voice Practice",
+                default="Clinical Voice Assistant",
             ),
             "azure_search_endpoint": self._get_setting(
                 env_var="AZURE_SEARCH_ENDPOINT",
@@ -365,7 +365,7 @@ class Config:
                 env_var="TRAINEE_HASH_SALT",
                 app_config=app_config_values,
                 app_config_key="TRAINEE_HASH_SALT",
-                default="live-voice-practice",
+                default="clinical-voice-assistant",
             ),
         }
         return result
@@ -381,7 +381,7 @@ class Config:
         if not endpoint:
             return {}
 
-        label = os.getenv("APP_CONFIG_LABEL", "live-voice-practice")
+        label = os.getenv("APP_CONFIG_LABEL", "clinical-voice-assistant")
         values: Dict[str, str] = {}
 
         for attempt in range(_APP_CONFIG_RETRY_ATTEMPTS):

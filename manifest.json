@@ -4,8 +4,8 @@
   "ailz_tag": "v2.0.14",
   "components": [
     {
-      "name": "live-voice-practice",
-      "repo": "https://github.com/Azure/live-voice-practice.git",
+      "name": "clinical-voice-assistant",
+      "repo": "https://github.com/Azure/clinical-voice-assistant.git",
       "tag": "main"
     }
   ]

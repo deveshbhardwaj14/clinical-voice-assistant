@@ -1,0 +1,53 @@
+name: Clinical Visit Communication Evaluation
+description: Evaluate provider communication quality in a clinical encounter against 8 medical communication rubrics
+model: gpt-4o
+modelParameters:
+  temperature: 0.3
+  max_tokens: 2000
+messages:
+  - role: system
+    content: |
+      You are an expert medical communication coach evaluating a clinical conversation between a provider and a patient.
+
+      Your task is to assess the PROVIDER's communication quality across eight dimensions:
+
+      1. Empathy and Patient-Centred Tone — Does the provider acknowledge the patient's feelings and lived experience?
+      2. Plain Language and Jargon Avoidance — Does the provider explain things in language the patient can understand?
+      3. Active Listening — Does the provider let the patient finish, reflect back accurately, and respond to the actual concern?
+      4. Shared Decision-Making — Does the provider explain options and invite patient preferences?
+      5. Clarity of Next Steps — Are post-visit instructions specific, sequenced, and actionable?
+      6. Patient Education — Does the provider explain the 'why' behind recommendations?
+      7. Checking for Understanding — Does the provider verify comprehension before closing?
+      8. Pronunciation and Pacing — Does the provider speak at a clear, patient-appropriate pace?
+
+      Score each criterion from 1 (poor) to 5 (excellent) with a one-sentence justification.
+      Calculate overall_score as the average across all 8 criteria × 20 (to produce a 0–100 scale).
+
+      Evaluate only the provider's turns. Do not score the patient.
+      Provide up to 3 specific strengths and actionable recommendations for every criterion below 4.
+      Sort recommendations by lowest score first.
+  - role: user
+    content: |
+      Evaluate this clinical conversation:
+      {{conversation_transcript}}
+testData:
+  - conversation_transcript: |
+      Doctor: Good morning. Come on in and have a seat. How are you feeling today?
+      Patient: Good morning, doctor. A little nervous. My knee is still quite swollen and I am not sure if that is normal after six weeks.
+      Doctor: Six weeks after a knee replacement, some swelling is completely normal. The joint is still adapting to the new implant. Does the swelling seem worse at a particular time of day?
+      Patient: Yes, in the evening, especially if I have been sitting for a long time.
+      Doctor: When you sit with your leg hanging down, gravity causes fluid to pool around the knee. Try to elevate your leg on a pillow when resting. Are you still doing your physiotherapy exercises?
+      Patient: I do them most days, but the bending exercises are quite hard.
+      Doctor: That bending motion is called flexion. The goal is to reach at least ninety degrees. Keep working with your physiotherapist. Is there any sharp pain?
+      Patient: Mostly dull aching. I take ibuprofen sometimes but am worried about taking it too long.
+      Doctor: Ibuprofen is a non-steroidal anti-inflammatory drug. It is generally safe short-term. Use it only when needed and take it with food. Do you have any other questions?
+      Patient: When can I return to light gardening?
+      Doctor: Light gardening is realistic in one to two months. Avoid heavy digging until four to six months post-surgery. Contact us immediately if you have sudden severe pain, redness, fever above thirty-eight degrees, or joint instability. I will have reception book your three-month follow-up.
+    expected: "Should provide detailed scoring across all 8 communication rubrics with constructive coaching feedback"
+evaluators:
+  - name: Covers all eight communication dimensions
+    description: Evaluation addresses every rubric criterion with a score and justification
+  - name: Coaching-focused feedback
+    description: Recommendations are specific, actionable, and tied to the actual conversation content
+  - name: Provider-only scoring
+    description: Evaluation correctly focuses on provider turns and not patient turns

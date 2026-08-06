@@ -3,7 +3,7 @@
 #  Licensed under the MIT License. See LICENSE in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-"""Business logic managers for the Live Voice Practice application."""
+"""Business logic managers for the Clinical Voice Assistant application."""
 
 import logging
 import re

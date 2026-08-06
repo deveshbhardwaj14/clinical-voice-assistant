@@ -39,7 +39,7 @@ Enable-AzCliNonInteractiveExtensions
 
 $resourceGroup = $env:AZURE_RESOURCE_GROUP
 $appConfigEndpoint = $env:APP_CONFIG_ENDPOINT
-$appConfigLabel = if ($env:APP_CONFIG_LABEL) { $env:APP_CONFIG_LABEL } else { 'live-voice-practice' }
+$appConfigLabel = if ($env:APP_CONFIG_LABEL) { $env:APP_CONFIG_LABEL } else { 'clinical-voice-assistant' }
 $appConfigFallbackLabel = 'ai-lz'
 $networkIsolationValue = if ($env:NETWORK_ISOLATION) { $env:NETWORK_ISOLATION } else { $env:AZURE_NETWORK_ISOLATION }
 $networkIsolationEnabled = $networkIsolationValue -match '^(true|True|1|yes|YES)$'

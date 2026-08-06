@@ -10,7 +10,7 @@
     "principalId": { "value": "${AZURE_PRINCIPAL_ID}" },
     "principalType": { "value": "${AZURE_PRINCIPAL_TYPE=User}" },
     "deploymentTags": { "value": {} },
-    "appConfigLabel": { "value": "live-voice-practice" },
+    "appConfigLabel": { "value": "clinical-voice-assistant" },
 
     "networkIsolation": { "value": "${NETWORK_ISOLATION=false}" },
     "useUAI": { "value": "${USE_UAI=false}" },

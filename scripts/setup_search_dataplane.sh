@@ -34,7 +34,7 @@ fi
 # at provision time. Read from it directly instead of calling ARM list (which
 # fails when the executing identity lacks Reader on the RG -- typical for the
 # AILZ jumpbox MI).
-APP_CONFIG_LABEL="${APP_CONFIG_LABEL:-live-voice-practice}"
+APP_CONFIG_LABEL="${APP_CONFIG_LABEL:-clinical-voice-assistant}"
 APP_CONFIG_FALLBACK_LABEL="ai-lz"
 
 get_appconfig_value() {

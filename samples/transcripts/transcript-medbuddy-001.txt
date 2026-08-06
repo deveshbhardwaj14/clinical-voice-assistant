@@ -1,0 +1,41 @@
+Doctor: Good morning. Come on in and have a seat. How are you feeling today?
+
+Patient: Good morning, doctor. A little nervous, to be honest. My knee is still quite swollen and I'm not sure if that is normal after six weeks.
+
+Doctor: I completely understand that concern, and it's a very good question to bring up. Six weeks after a knee replacement, some swelling is actually quite normal. Your body is still in the healing phase. The joint is adapting to the new implant, and swelling can persist for three to six months in many patients. Does the swelling seem worse at a particular time of day?
+
+Patient: Yes, in the evening, especially if I have been sitting for a long time.
+
+Doctor: That makes sense. When you sit with your leg hanging down, gravity causes fluid to pool around the knee. Try to elevate your leg on a pillow when you are resting — that helps the fluid drain back. Are you still doing your physiotherapy exercises?
+
+Patient: I do them most days, but some exercises feel quite hard. The ones where I have to bend my knee all the way.
+
+Doctor: That bending motion is called flexion, and it can be uncomfortable at this stage. The goal is to reach at least ninety degrees of bend — that's about the angle of a right angle. How far do you think you can bend it now?
+
+Patient: Maybe halfway? I am not sure what that means in degrees.
+
+Doctor: That is fine — we will check the range of motion together today. Halfway is probably around forty-five degrees, which is progress. By twelve weeks most patients get to ninety. Keep working with your physiotherapist. Is there any sharp pain, or is it more of a dull aching feeling?
+
+Patient: Mostly dull aching. I take ibuprofen sometimes but I am worried about taking it too long. Is it safe?
+
+Doctor: That is a very sensible concern. Ibuprofen is what we call a non-steroidal anti-inflammatory drug — it reduces inflammation and pain. For short-term use it is generally safe, but taking it every day for months can be hard on the stomach and kidneys. I would recommend using it only on days when the pain is really bothering you, and always take it with food. If you need pain relief most days, let me know and we can discuss alternatives. Do you have any stomach issues already?
+
+Patient: No, my stomach is fine.
+
+Doctor: Good. Then occasional ibuprofen is fine for now. You mentioned you want to get back to gardening — that is a great goal. When do you think you would like to be doing that?
+
+Patient: I was hoping maybe in a month or two?
+
+Doctor: That is realistic for light gardening — things like watering plants or light planting while kneeling on a padded mat. I would avoid heavy digging or prolonged kneeling on hard surfaces until about four to six months post-surgery. The key is listening to your body. If you feel sharp pain or significant swelling after an activity, that is a signal to ease back.
+
+Patient: That is helpful. And what should I watch out for — like, when should I call you right away?
+
+Doctor: Great question. Please contact us immediately if you notice: sudden, severe pain that is much worse than before; significant warmth or redness around the knee; a fever above thirty-eight degrees Celsius; or if the knee feels unstable when you stand. Those could be signs of infection or a complication and need to be checked quickly.
+
+Patient: Okay, I will remember those. Should I come back to see you, or is today the last visit?
+
+Doctor: I would like to see you again at three months — so about six weeks from now. By then we should see your range of motion improving and the swelling reducing. I will have reception book that appointment for you before you leave. Do you have any other questions for me today?
+
+Patient: I think that covers everything. Thank you for explaining everything so clearly. I feel much better now.
+
+Doctor: You are very welcome. You are doing really well. Keep up with the exercises, elevate that leg when you can, and do not hesitate to call us if anything worries you before your next appointment. Take care.

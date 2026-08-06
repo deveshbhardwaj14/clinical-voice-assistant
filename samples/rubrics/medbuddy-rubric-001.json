@@ -1,0 +1,187 @@
+{
+  "rubricId": "medbuddy-provider-communication-v1",
+  "appliesTo": {
+    "scenarioIds": ["medbuddy-followup-001"]
+  },
+  "referenceTranscripts": [
+    "transcript-medbuddy-001"
+  ],
+  "criteria": [
+    {
+      "criterionId": "empathy",
+      "name": "Empathy and Patient-Centred Tone",
+      "description": "Assesses whether the provider acknowledges the patient's feelings, concerns, and lived experience with warmth and respect.",
+      "levels": [
+        {
+          "level": 1,
+          "label": "Absent",
+          "description": "Dismissive of patient concerns; focuses solely on clinical data without acknowledging the patient as a person."
+        },
+        {
+          "level": 3,
+          "label": "Partial",
+          "description": "Acknowledges some concerns but empathy is inconsistent or feels formulaic."
+        },
+        {
+          "level": 5,
+          "label": "Excellent",
+          "description": "Consistently acknowledges the patient's emotional state and concerns; normalises experiences and validates feelings throughout."
+        }
+      ]
+    },
+    {
+      "criterionId": "plain_language",
+      "name": "Plain Language and Jargon Avoidance",
+      "description": "Evaluates whether the provider explains diagnoses, procedures, and instructions in language the patient can understand, avoiding unexplained medical jargon.",
+      "levels": [
+        {
+          "level": 1,
+          "label": "Heavy Jargon",
+          "description": "Uses multiple unexplained medical terms; patient is likely to leave confused."
+        },
+        {
+          "level": 3,
+          "label": "Mostly Clear",
+          "description": "Generally clear but includes some unexplained terms or overly complex phrasing."
+        },
+        {
+          "level": 5,
+          "label": "Fully Accessible",
+          "description": "Consistently uses everyday language; explains any necessary medical terms with simple analogies or examples."
+        }
+      ]
+    },
+    {
+      "criterionId": "active_listening",
+      "name": "Active Listening",
+      "description": "Measures whether the provider allows the patient to finish speaking, reflects back what they heard, and responds to the actual concern raised rather than a generic assumption.",
+      "levels": [
+        {
+          "level": 1,
+          "label": "Poor",
+          "description": "Interrupts frequently or ignores key patient statements; responses feel disconnected from what the patient said."
+        },
+        {
+          "level": 3,
+          "label": "Adequate",
+          "description": "Listens in most exchanges but occasionally talks over the patient or misses an explicit concern."
+        },
+        {
+          "level": 5,
+          "label": "Excellent",
+          "description": "Consistently lets the patient finish; reflects back concerns accurately; probes for more when needed."
+        }
+      ]
+    },
+    {
+      "criterionId": "shared_decision_making",
+      "name": "Shared Decision-Making",
+      "description": "Assesses whether the provider explains options, invites the patient's preference, and ensures decisions are made collaboratively rather than prescribed unilaterally.",
+      "levels": [
+        {
+          "level": 1,
+          "label": "Absent",
+          "description": "Provider dictates the plan with no invitation for patient input or questions."
+        },
+        {
+          "level": 3,
+          "label": "Token",
+          "description": "Offers a brief opportunity for questions but does not genuinely explore patient preferences or concerns about options."
+        },
+        {
+          "level": 5,
+          "label": "Collaborative",
+          "description": "Explains options with pros and cons in plain terms; elicits the patient's priorities and incorporates them into the plan."
+        }
+      ]
+    },
+    {
+      "criterionId": "clarity_of_next_steps",
+      "name": "Clarity of Next Steps",
+      "description": "Evaluates how clearly the provider explains what the patient should do after the visit, including medications, activity, and when to seek further care.",
+      "levels": [
+        {
+          "level": 1,
+          "label": "Unclear",
+          "description": "Next steps are vague, missing, or contradictory; patient is likely unsure what to do."
+        },
+        {
+          "level": 3,
+          "label": "Mostly Clear",
+          "description": "Key next steps are covered but timeline or conditions for seeking urgent care are missing."
+        },
+        {
+          "level": 5,
+          "label": "Fully Clear",
+          "description": "Next steps are specific, sequenced, and include when to return, what to watch for, and how to reach the team if needed."
+        }
+      ]
+    },
+    {
+      "criterionId": "patient_education",
+      "name": "Patient Education",
+      "description": "Assesses whether the provider proactively explains the patient's condition and recovery in a way that builds understanding and self-management confidence.",
+      "levels": [
+        {
+          "level": 1,
+          "label": "None",
+          "description": "No educational content provided; patient leaves without understanding their condition or recovery."
+        },
+        {
+          "level": 3,
+          "label": "Basic",
+          "description": "Some explanation given but gaps remain; patient may not understand why they are doing what is recommended."
+        },
+        {
+          "level": 5,
+          "label": "Thorough",
+          "description": "Explains the 'why' behind recommendations; uses relatable examples; checks understanding and invites follow-up questions."
+        }
+      ]
+    },
+    {
+      "criterionId": "check_for_understanding",
+      "name": "Checking for Understanding",
+      "description": "Measures whether the provider verifies that the patient understood the key information before concluding the visit.",
+      "levels": [
+        {
+          "level": 1,
+          "label": "Absent",
+          "description": "No check for understanding; visit ends abruptly without confirming patient comprehension."
+        },
+        {
+          "level": 3,
+          "label": "Minimal",
+          "description": "Asks once (e.g. 'Any questions?') but does not probe whether the patient genuinely understood."
+        },
+        {
+          "level": 5,
+          "label": "Thorough",
+          "description": "Uses teach-back or targeted questions to confirm understanding; addresses any remaining gaps before closing."
+        }
+      ]
+    },
+    {
+      "criterionId": "pronunciation_and_pacing",
+      "name": "Pronunciation and Pacing",
+      "description": "Evaluates whether the provider speaks clearly, at an appropriate pace, with good diction — particularly important when speaking with patients for whom English is not a first language.",
+      "levels": [
+        {
+          "level": 1,
+          "label": "Difficult to Follow",
+          "description": "Speaks too fast, mumbles, or has significant pronunciation issues that impede comprehension."
+        },
+        {
+          "level": 3,
+          "label": "Generally Clear",
+          "description": "Mostly clear but occasionally rushes through complex instructions or important information."
+        },
+        {
+          "level": 5,
+          "label": "Excellent",
+          "description": "Speaks at a calm, patient-appropriate pace; enunciates clearly; pauses naturally to allow patient processing."
+        }
+      ]
+    }
+  ]
+}

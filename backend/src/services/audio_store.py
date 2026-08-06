@@ -28,7 +28,7 @@ class SessionAudioStore:
     """Store user PCM audio received over WebSocket without sending it through analysis HTTP requests."""
 
     def __init__(self, base_dir: Optional[Path] = None):
-        self.base_dir = base_dir or Path(tempfile.gettempdir()) / "live-voice-practice-audio"
+        self.base_dir = base_dir or Path(tempfile.gettempdir()) / "clinical-voice-assistant-audio"
         self.base_dir.mkdir(parents=True, exist_ok=True)
         self._lock = Lock()
         self._metadata: Dict[str, Dict[str, int | float | str]] = {}

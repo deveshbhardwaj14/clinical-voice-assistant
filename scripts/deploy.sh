@@ -58,7 +58,7 @@ echo
 #endregion
 
 #region Read values from App Configuration
-label="live-voice-practice"
+label="clinical-voice-assistant"
 echo -e "${BLUE}Loading values from App Configuration (label=${label})...${NC}"
 
 get_config_value() {

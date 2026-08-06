@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-  Button,
-  Card,
-  CardHeader,
-  Dropdown,
-  Label,
-  Option,
-  Text,
-  makeStyles,
-  tokens,
+    Button,
+    Card,
+    CardHeader,
+    Dropdown,
+    Label,
+    Option,
+    Text,
+    makeStyles,
+    tokens,
 } from '@fluentui/react-components'
 import { History24Regular, People24Regular } from '@fluentui/react-icons'
 import { useState } from 'react'
@@ -108,7 +108,7 @@ export function ScenarioList({
       <div className={styles.header}>
         <img
           src="/images/logo.png"
-          alt={appName || 'Live Voice Practice'}
+          alt={appName || 'Clinical Voice Assistant'}
           className={styles.logo}
         />
         <Text size={500} weight="semibold">

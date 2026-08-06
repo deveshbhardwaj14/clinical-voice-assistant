@@ -37,7 +37,7 @@ if (-not $resourceGroup) {
 # token derivation or ARM list calls (which fail when the executing identity
 # lacks Reader on the RG -- typical for the AILZ jumpbox MI).
 $appConfigEndpoint = $env:APP_CONFIG_ENDPOINT
-$appConfigLabel = if ($env:APP_CONFIG_LABEL) { $env:APP_CONFIG_LABEL } else { 'live-voice-practice' }
+$appConfigLabel = if ($env:APP_CONFIG_LABEL) { $env:APP_CONFIG_LABEL } else { 'clinical-voice-assistant' }
 $appConfigFallbackLabel = 'ai-lz'
 
 function Get-AppConfigValue {

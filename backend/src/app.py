@@ -3,7 +3,7 @@
 #  Licensed under the MIT License. See LICENSE in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-"""Flask application for Live Voice Practice."""
+"""Flask application for Clinical Voice Assistant."""
 
 import asyncio
 import csv
@@ -38,6 +38,8 @@ from src.routes.admin_content import admin_content_bp
 from src.services.search_service import SupportMaterialsSearchService
 from src.services.statistics_service import StatisticsFilters, parse_iso, statistics_service
 from src.services.websocket_handler import VoiceProxyHandler
+from src.services.transcript_simplifier import TranscriptSimplifier
+from src.services.patient_summary import PatientSummaryGenerator
 
 # Constants
 STATIC_FOLDER = "../static"
@@ -58,6 +60,8 @@ API_STATISTICS_TRAINEES_ENDPOINT = "/api/admin/statistics/trainees"
 API_STATISTICS_EXPORT_ENDPOINT = "/api/admin/statistics/export"
 API_GRAPH_SCENARIO_ENDPOINT = "/api/scenarios/graph"
 API_CLIENT_LOG_ENDPOINT = "/api/client-log"
+API_SIMPLIFY_ENDPOINT = "/api/simplify"
+API_PATIENT_SUMMARY_ENDPOINT = "/api/analyze/patient-summary"
 
 # Whitelist of client-log levels that map to logger methods.
 _CLIENT_LOG_LEVELS = {"debug", "info", "warning", "error"}
@@ -149,6 +153,8 @@ def _initialize_search_service():
 search_service = _initialize_search_service()
 conversation_analyzer = ConversationAnalyzer(search_service=search_service)
 pronunciation_assessor = PronunciationAssessor()
+transcript_simplifier = TranscriptSimplifier()
+patient_summary_generator = PatientSummaryGenerator()
 voice_proxy_handler = VoiceProxyHandler(agent_manager, scenario_manager)
 
 # Wire admin content-management routes and hot-reload caches so trainer edits
@@ -198,7 +204,7 @@ def get_config():
         {
             "proxy_enabled": True,
             "ws_endpoint": WEBSOCKET_ENDPOINT,
-            "app_name": config.get("app_display_name", "Live Voice Practice"),
+            "app_name": config.get("app_display_name", "Clinical Voice Assistant"),
         }
     )
 
@@ -1023,11 +1029,75 @@ def generate_graph_scenario():
         return jsonify({"error": str(e)}), HTTP_INTERNAL_SERVER_ERROR
 
 
+@app.route(API_SIMPLIFY_ENDPOINT, methods=["POST"])
+def simplify_transcript():
+    """Simplify a transcript segment for patient-facing real-time display.
+
+    Body: { "text": str, "reading_level": str, "language": str }
+    Returns: { "simplified_text": str }
+    """
+    data = cast(Dict[str, Any], request.json or {})
+    text = cast(str, data.get("text", "")).strip()
+    if not text:
+        return jsonify({"error": "text is required"}), HTTP_BAD_REQUEST
+
+    reading_level = cast(str, data.get("reading_level", "plain"))
+    language = cast(str, data.get("language", "en"))
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        simplified = loop.run_until_complete(
+            transcript_simplifier.simplify(text, reading_level=reading_level, target_language=language)
+        )
+        return jsonify({"simplified_text": simplified})
+    except Exception as e:
+        logger.exception("Transcript simplification failed")
+        return jsonify({"error": str(e)}), HTTP_INTERNAL_SERVER_ERROR
+    finally:
+        loop.close()
+
+
+@app.route(API_PATIENT_SUMMARY_ENDPOINT, methods=["POST"])
+def generate_patient_summary():
+    """Generate a patient-facing post-visit summary from the full visit transcript.
+
+    Body: { "transcript": str, "patient_language": str, "visit_type": str }
+    Returns: structured patient summary JSON
+    """
+    data = cast(Dict[str, Any], request.json or {})
+    transcript = cast(str, data.get("transcript", "")).strip()
+    if not transcript:
+        return jsonify({"error": "transcript is required"}), HTTP_BAD_REQUEST
+
+    patient_language = cast(str, data.get("patient_language", "en"))
+    visit_type = cast(str, data.get("visit_type", "General Consultation"))
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        summary = loop.run_until_complete(
+            patient_summary_generator.generate(
+                transcript,
+                patient_language=patient_language,
+                visit_type=visit_type,
+            )
+        )
+        if summary is None:
+            return jsonify({"error": "Failed to generate patient summary"}), HTTP_INTERNAL_SERVER_ERROR
+        return jsonify(summary)
+    except Exception as e:
+        logger.exception("Patient summary generation failed")
+        return jsonify({"error": str(e)}), HTTP_INTERNAL_SERVER_ERROR
+    finally:
+        loop.close()
+
+
 def main():
     """Run the Flask application."""
     host = config["host"]
     port = config["port"]
-    print(f"Starting Live Voice Practice on http://{host}:{port}")
+    print(f"Starting Clinical Voice Assistant on http://{host}:{port}")
 
     debug_mode = os.getenv("FLASK_ENV") == "development"
     app.run(host=host, port=port, debug=debug_mode)

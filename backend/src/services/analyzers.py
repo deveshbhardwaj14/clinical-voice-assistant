@@ -79,16 +79,17 @@ class ConversationScoringError(RuntimeError):
     """Raised when conversation scoring fails after retryable attempts."""
 
 
-# Fallback evaluation prompt for custom scenarios
-FALLBACK_EVALUATION_PROMPT = """You are an expert communication coach evaluating a role-play conversation.
+# Fallback evaluation prompt used when no scenario-specific prompt is found
+FALLBACK_EVALUATION_PROMPT = """You are an expert medical communication coach evaluating a clinical conversation.
 
-Evaluate the user's performance based on:
-- Communication clarity and professionalism
-- Active listening and engagement
-- Problem-solving and responsiveness
-- Achievement of conversation objectives
+Evaluate the provider's performance based on:
+- Empathy and patient-centred communication
+- Clarity of medical explanation in plain language
+- Active listening and acknowledgement of patient concerns
+- Shared decision-making and next-steps guidance
+- Professionalism and appropriate tone
 
-Provide constructive feedback to help improve their skills."""
+Provide constructive, coaching-oriented feedback to help the provider improve."""
 
 
 class ConversationAnalyzer:
@@ -312,8 +313,9 @@ SUPPORTING MATERIALS (use these as reference when evaluating policy adherence an
         return [
             {
                 "role": "system",
-                "content": "You are an expert sales conversation evaluator. "
-                "Analyze the provided conversation and return a structured evaluation.",
+                "content": "You are an expert medical communication coach. "
+                "Analyze the provided clinical conversation and return a structured evaluation "
+                "of the provider's communication quality.",
             },
             {"role": "user", "content": evaluation_prompt},
         ]
@@ -464,8 +466,8 @@ SUPPORTING MATERIALS (use these as reference when evaluating policy adherence an
                                 {
                                     "role": "system",
                                     "content": (
-                                        "You are an expert conversation evaluator. "
-                                        "Score the trainee's performance using the rubric criteria provided. "
+                                        "You are an expert medical communication coach. "
+                                        "Score the provider's communication quality using the rubric criteria provided. "
                                         "Return a structured evaluation."
                                     ),
                                 },

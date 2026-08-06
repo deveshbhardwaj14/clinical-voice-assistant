@@ -4,11 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-  Assessment,
-  AVATAR_OPTIONS,
-  ConversationDetailData,
-  ConversationListResponse,
-  Scenario,
+    Assessment,
+    AVATAR_OPTIONS,
+    ConversationDetailData,
+    ConversationListResponse,
+    PatientSummary,
+    Scenario,
 } from '../types'
 
 const MAX_LEGACY_ANALYZE_AUDIO_PAYLOAD_CHARS = 60000
@@ -287,5 +288,41 @@ export const api = {
     } catch {
       /* swallow */
     }
+  },
+
+  async simplifyTranscript(
+    text: string,
+    readingLevel: string = 'plain',
+    language: string = 'en'
+  ): Promise<string> {
+    const res = await fetch('/api/simplify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, reading_level: readingLevel, language }),
+    })
+    if (!res.ok) return text
+    const data = await res.json()
+    return (data.simplified_text as string) ?? text
+  },
+
+  async generatePatientSummary(
+    transcript: string,
+    patientLanguage: string = 'en',
+    visitType: string = 'General Consultation'
+  ): Promise<PatientSummary> {
+    const res = await fetch('/api/analyze/patient-summary', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        transcript,
+        patient_language: patientLanguage,
+        visit_type: visitType,
+      }),
+    })
+    if (!res.ok) {
+      const message = await getErrorMessage(res)
+      throw new Error(message)
+    }
+    return res.json()
   },
 }
