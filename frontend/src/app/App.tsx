@@ -147,6 +147,7 @@ export default function App() {
   const [patientName, setPatientName] = useState<string>('')
   const [patientId, setPatientId] = useState<string>('')
   const [consentConfirmed, setConsentConfirmed] = useState(false)
+  const [startVisitError, setStartVisitError] = useState<string | null>(null)
   const [startingMicrophone, setStartingMicrophone] = useState(false)
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false)
 
@@ -396,8 +397,23 @@ export default function App() {
   } = useRecorder(sendAudioChunk)
 
   const handleStart = async (visitType: string) => {
-    if (!selectedScenario) return
-    if (!consentConfirmed) return
+    console.info('handleStart called', {
+      selectedScenario,
+      consentConfirmed,
+      visitType,
+      time: new Date().toISOString(),
+    })
+
+    if (!selectedScenario) {
+      setStartVisitError('No consultation scenario is available to start.')
+      return
+    }
+    if (!consentConfirmed) {
+      setStartVisitError('Please confirm consent before starting the visit recording.')
+      return
+    }
+
+    setStartVisitError(null)
 
     const parsedAvatar = parseAvatarValue('audio-only')
     const isAudioOnly = true
@@ -610,7 +626,11 @@ export default function App() {
               consentConfirmed={consentConfirmed}
               onPatientNameChange={setPatientName}
               onPatientIdChange={setPatientId}
-              onConsentChange={setConsentConfirmed}
+              onConsentChange={value => {
+                setConsentConfirmed(value)
+                if (value) setStartVisitError(null)
+              }}
+              startVisitError={startVisitError}
             />
           )}
         </div>

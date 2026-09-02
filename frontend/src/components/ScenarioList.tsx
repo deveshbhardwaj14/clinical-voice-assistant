@@ -151,6 +151,7 @@ interface Props {
   onPatientNameChange?: (value: string) => void
   onPatientIdChange?: (value: string) => void
   onConsentChange?: (checked: boolean) => void
+  startVisitError?: string | null
 }
 
 export function ScenarioList({
@@ -172,6 +173,7 @@ export function ScenarioList({
   onPatientNameChange,
   onPatientIdChange,
   onConsentChange,
+  startVisitError,
 }: Props) {
   const styles = useStyles()
 
@@ -241,6 +243,12 @@ export function ScenarioList({
         </Text>
       </label>
 
+      {startVisitError && (
+        <Text size={200} style={{ color: '#b42318', marginBottom: tokens.spacingVerticalS }}>
+          {startVisitError}
+        </Text>
+      )}
+
       <div className={styles.visitTypeGrid}>
         {visitTypes.map(visitType => {
           const isSelected = selectedVisitType === visitType.id
@@ -301,7 +309,14 @@ export function ScenarioList({
         </div>
         <Button
           appearance="primary"
-          onClick={() => onStart(selectedVisitType)}
+          onClick={() => {
+            console.info('Start Visit & Record button clicked', {
+              selectedVisitType,
+              consentConfirmed,
+              time: new Date().toISOString(),
+            })
+            onStart(selectedVisitType)
+          }}
           size="large"
           disabled={!consentConfirmed}
         >
