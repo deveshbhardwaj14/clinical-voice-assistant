@@ -305,7 +305,7 @@ export function ScenarioList({
           size="large"
           disabled={!consentConfirmed}
         >
-          Start Visit
+          Start Visit & Record
         </Button>
       </div>
     </>
