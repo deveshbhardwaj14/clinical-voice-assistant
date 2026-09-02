@@ -4,25 +4,25 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-  Button,
-  Card,
-  MessageBar,
-  MessageBarActions,
-  MessageBarBody,
-  MessageBarTitle,
-  Switch,
-  Text,
-  makeStyles,
-  tokens,
+    Button,
+    Card,
+    MessageBar,
+    MessageBarActions,
+    MessageBarBody,
+    MessageBarTitle,
+    Switch,
+    Text,
+    makeStyles,
+    tokens,
 } from '@fluentui/react-components'
 import {
-  ChartMultipleRegular,
-  DeleteRegular,
-  DismissRegular,
-  History20Regular,
-  MicOffRegular,
-  MicRegular,
-  People20Regular,
+    ChartMultipleRegular,
+    DeleteRegular,
+    DismissRegular,
+    History20Regular,
+    MicOffRegular,
+    MicRegular,
+    People20Regular,
 } from '@fluentui/react-icons'
 import { Message, Scenario } from '../types'
 
@@ -102,6 +102,8 @@ interface Props {
   onNavigateToConversations?: () => void
   isTrainer?: boolean
   onNavigateToAllPractices?: () => void
+  startingMicrophone?: boolean
+  isGeneratingSummary?: boolean
 }
 
 export function ChatPanel({
@@ -122,6 +124,8 @@ export function ChatPanel({
   onNavigateToConversations,
   isTrainer,
   onNavigateToAllPractices,
+  startingMicrophone,
+  isGeneratingSummary,
 }: Props) {
   const styles = useStyles()
 
@@ -170,6 +174,30 @@ export function ChatPanel({
       </div>
 
       <div className={styles.controls}>
+        {startingMicrophone && (
+          <MessageBar
+            intent="info"
+            style={{ marginBottom: tokens.spacingVerticalS, width: '100%' }}
+          >
+            <MessageBarBody>
+              <MessageBarTitle>Starting microphone…</MessageBarTitle>
+              Please allow microphone access when the browser prompt appears.
+            </MessageBarBody>
+          </MessageBar>
+        )}
+
+        {isGeneratingSummary && (
+          <MessageBar
+            intent="info"
+            style={{ marginBottom: tokens.spacingVerticalS, width: '100%' }}
+          >
+            <MessageBarBody>
+              <MessageBarTitle>Generating summary…</MessageBarTitle>
+              Preparing the patient-friendly summary and clinician review.
+            </MessageBarBody>
+          </MessageBar>
+        )}
+
         {recordingError && (
           <MessageBar
             intent="error"

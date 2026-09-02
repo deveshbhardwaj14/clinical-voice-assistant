@@ -147,6 +147,8 @@ export default function App() {
   const [patientName, setPatientName] = useState<string>('')
   const [patientId, setPatientId] = useState<string>('')
   const [consentConfirmed, setConsentConfirmed] = useState(false)
+  const [startingMicrophone, setStartingMicrophone] = useState(false)
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false)
 
   // Clinical session state
   const [patientLanguage, setPatientLanguage] = useState<string>('en')
@@ -415,6 +417,11 @@ export default function App() {
       media: { audio: false, video: false },
       candidateTypes: [],
     })
+    setCurrentAgent(null)
+    setSelectedVisitType(visitType)
+    setCurrentView('practice')
+
+    setStartingMicrophone(true)
     try {
       const { agent_id } = await api.createAgent(selectedScenario, parsedAvatar)
 
@@ -425,8 +432,9 @@ export default function App() {
         })
       }
       setCurrentAgent(agent_id)
-      setSelectedVisitType(visitType)
-      setCurrentView('practice')
+      if (!recording) {
+        await toggleRecording()
+      }
     } catch (error) {
       console.error('Failed to create agent:', error)
       updateAvatarDiagnostics({
@@ -434,6 +442,8 @@ export default function App() {
         warning:
           error instanceof Error ? error.message : 'Failed to create agent.',
       })
+    } finally {
+      setStartingMicrophone(false)
     }
   }
 
@@ -502,6 +512,7 @@ export default function App() {
 
     setShowLoading(true)
     setAnalysisError(null)
+    setIsGeneratingSummary(true)
 
     try {
       const transcript = recordings.conversation
@@ -538,6 +549,7 @@ export default function App() {
       setAnalysisError(`Post-visit analysis failed. ${detail}`)
     } finally {
       setShowLoading(false)
+      setIsGeneratingSummary(false)
     }
   }, [
     currentAgent,
@@ -708,6 +720,8 @@ export default function App() {
             onNavigateToConversations={navigateToConversations}
             isTrainer={isTrainer}
             onNavigateToAllPractices={navigateToAllPractices}
+            startingMicrophone={startingMicrophone}
+            isGeneratingSummary={isGeneratingSummary}
           />
         </div>
       )}
@@ -716,7 +730,11 @@ export default function App() {
       {currentView === 'results' && (
         <div className={styles.resultsLayout}>
           <div className={styles.resultsPanel}>
-            {patientSummary ? (
+            {isGeneratingSummary ? (
+              <Text style={{ color: tokens.colorNeutralForeground3 }}>
+                Generating patient summary and provider review...
+              </Text>
+            ) : patientSummary ? (
               <PatientSummaryPanel
                 summary={patientSummary}
                 visitType={
