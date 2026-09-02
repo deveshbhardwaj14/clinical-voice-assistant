@@ -204,7 +204,7 @@ def get_config():
         {
             "proxy_enabled": True,
             "ws_endpoint": WEBSOCKET_ENDPOINT,
-            "app_name": config.get("app_display_name", "Clinical Voice Assistant"),
+            "app_name": config.get("app_display_name", "Special Olympics MedBuddy"),
         }
     )
 

@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-    Badge,
-    Card,
-    Text,
-    makeStyles,
-    tokens,
+  Badge,
+  Card,
+  Text,
+  makeStyles,
+  tokens,
 } from '@fluentui/react-components'
 import { useEffect, useRef } from 'react'
 import { SimplifiedTranscriptEntry } from '../types'
@@ -140,7 +140,7 @@ export function PatientTranscriptPanel({ entries, isListening }: Props) {
               }`}
             >
               <Text className={styles.speakerLabel}>
-                {entry.speaker === 'doctor' ? 'Doctor' : 'You'}
+                {entry.speaker === 'doctor' ? 'Clinician' : 'Patient'}
               </Text>
               <Text className={styles.simplifiedText}>{entry.simplifiedText}</Text>
               {entry.simplifiedText !== entry.originalText && (

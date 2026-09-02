@@ -298,7 +298,7 @@ class Config:
                 env_var="APP_DISPLAY_NAME",
                 app_config=app_config_values,
                 app_config_key="APP_DISPLAY_NAME",
-                default="Clinical Voice Assistant",
+                default="Special Olympics MedBuddy",
             ),
             "azure_search_endpoint": self._get_setting(
                 env_var="AZURE_SEARCH_ENDPOINT",

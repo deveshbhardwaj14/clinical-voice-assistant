@@ -1,0 +1,8 @@
+<svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="220" height="220" rx="36" fill="#F4F9FF"/>
+  <circle cx="110" cy="76" r="42" fill="#1D5B9F"/>
+  <circle cx="110" cy="76" r="18" fill="#F4B942"/>
+  <path d="M68 154C68 132.461 85.4609 115 107 115H113C134.539 115 152 132.461 152 154V162H68V154Z" fill="#1D5B9F"/>
+  <path d="M82 118.5C82 93.5955 101.595 74 126.5 74H134.5C159.405 74 179 93.5955 179 118.5V129H82V118.5Z" fill="#F4B942" opacity="0.9"/>
+  <text x="110" y="188" text-anchor="middle" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700" fill="#1D5B9F">MedBuddy</text>
+</svg>

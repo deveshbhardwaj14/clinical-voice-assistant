@@ -7,16 +7,12 @@ import {
     Button,
     Card,
     CardHeader,
-    Dropdown,
-    Label,
-    Option,
     Text,
     makeStyles,
     tokens,
 } from '@fluentui/react-components'
 import { History24Regular, People24Regular } from '@fluentui/react-icons'
-import { useState } from 'react'
-import { AVATAR_OPTIONS, DEFAULT_AVATAR, Scenario } from '../types'
+import { Scenario } from '../types'
 
 const useStyles = makeStyles({
   header: {
@@ -25,10 +21,20 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     alignItems: 'center',
     gap: tokens.spacingVerticalS,
+    textAlign: 'center',
   },
   logo: {
-    width: '80px',
+    width: '88px',
     height: 'auto',
+    filter: 'drop-shadow(0 8px 24px rgba(29, 91, 159, 0.12))',
+  },
+  title: {
+    color: '#1d5b9f',
+  },
+  subtitle: {
+    color: '#4b5d6f',
+    maxWidth: '420px',
+    textAlign: 'center',
   },
   cardsGrid: {
     display: 'grid',
@@ -66,14 +72,31 @@ const useStyles = makeStyles({
     gap: tokens.spacingHorizontalS,
     flexWrap: 'wrap',
   },
-  avatarSelector: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacingHorizontalS,
-    flexGrow: 1,
+  visitTypeGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: tokens.spacingHorizontalM,
+    width: '100%',
+    marginTop: tokens.spacingVerticalM,
+    marginBottom: tokens.spacingVerticalM,
   },
-  avatarDropdown: {
-    minWidth: '200px',
+  visitTypeCard: {
+    cursor: 'pointer',
+    width: '100%',
+    padding: tokens.spacingVerticalM,
+    borderRadius: tokens.borderRadiusMedium,
+    border: `1px solid ${tokens.colorNeutralStroke2}`,
+    backgroundColor: tokens.colorNeutralBackground1,
+    textAlign: 'center',
+    transition: 'all 0.2s',
+    '&:hover': {
+      transform: 'translateY(-1px)',
+      boxShadow: tokens.shadow8,
+    },
+  },
+  selectedVisitType: {
+    backgroundColor: '#e8f1ff',
+    boxShadow: '0 0 0 1px #1d5b9f inset',
   },
 })
 
@@ -81,12 +104,14 @@ interface Props {
   scenarios: Scenario[]
   selectedScenario: string | null
   onSelect: (id: string) => void
-  onStart: (avatarValue: string) => void
+  onStart: (visitType: string) => void
   isAuthenticated?: boolean
   onNavigateToConversations?: () => void
   isTrainer?: boolean
   onNavigateToAllPractices?: () => void
   appName?: string
+  selectedVisitType?: string
+  onVisitTypeChange?: (visitType: string) => void
 }
 
 export function ScenarioList({
@@ -99,21 +124,55 @@ export function ScenarioList({
   isTrainer,
   onNavigateToAllPractices,
   appName,
+  selectedVisitType = 'new-visit',
+  onVisitTypeChange,
 }: Props) {
   const styles = useStyles()
-  const [selectedAvatar, setSelectedAvatar] = useState(DEFAULT_AVATAR)
+
+  const visitTypes = [
+    { id: 'new-visit', label: 'New Visit' },
+    { id: 'follow-up-visit', label: 'Follow-Up Visit' },
+  ]
 
   return (
     <>
       <div className={styles.header}>
         <img
-          src="/images/logo.png"
-          alt={appName || 'Clinical Voice Assistant'}
+          src="/images/special-olympics-logo.svg"
+          alt={appName || 'Special Olympics MedBuddy'}
           className={styles.logo}
         />
-        <Text size={500} weight="semibold">
-          {appName || 'Select Training Scenario'}
+        <Text size={500} weight="semibold" className={styles.title}>
+          {appName || 'MedBuddy Visit'}
         </Text>
+        <Text size={200} className={styles.subtitle}>
+          Doctor-approved patient visit capture for inclusive care and follow-up support.
+        </Text>
+      </div>
+
+      <div className={styles.visitTypeGrid}>
+        {visitTypes.map(visitType => {
+          const isSelected = selectedVisitType === visitType.id
+          return (
+            <div
+              key={visitType.id}
+              className={`${styles.visitTypeCard} ${isSelected ? styles.selectedVisitType : ''}`}
+              onClick={() => onVisitTypeChange?.(visitType.id)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={event => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  onVisitTypeChange?.(visitType.id)
+                }
+              }}
+            >
+              <Text weight="semibold" size={400}>
+                {visitType.label}
+              </Text>
+            </div>
+          )
+        })}
       </div>
 
       {/* Server-side scenarios */}
@@ -157,36 +216,13 @@ export function ScenarioList({
             </Button>
           )}
         </div>
-        <div className={styles.avatarSelector}>
-          <Label htmlFor="avatar-select">Live Voice Agent:</Label>
-          <Dropdown
-            id="avatar-select"
-            className={styles.avatarDropdown}
-            value={
-              AVATAR_OPTIONS.find(opt => opt.value === selectedAvatar)?.label ||
-              ''
-            }
-            selectedOptions={[selectedAvatar]}
-            onOptionSelect={(_, data) => {
-              if (data.optionValue) {
-                setSelectedAvatar(data.optionValue)
-              }
-            }}
-          >
-            {AVATAR_OPTIONS.map(option => (
-              <Option key={option.value} value={option.value}>
-                {option.label}
-              </Option>
-            ))}
-          </Dropdown>
-        </div>
         <Button
           appearance="primary"
           disabled={!selectedScenario}
-          onClick={() => onStart(selectedAvatar)}
+          onClick={() => onStart(selectedVisitType)}
           size="large"
         >
-          Start Training
+          Start Visit
         </Button>
       </div>
     </>

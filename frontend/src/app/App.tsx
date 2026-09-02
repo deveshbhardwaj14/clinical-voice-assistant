@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogSurface,
-  makeStyles,
-  Spinner,
-  Text,
-  tokens,
+    Button,
+    Dialog,
+    DialogBody,
+    DialogSurface,
+    makeStyles,
+    Spinner,
+    Text,
+    tokens,
 } from '@fluentui/react-components'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AssessmentPanel } from '../components/AssessmentPanel'
@@ -24,9 +24,9 @@ import { ProviderRubricPanel } from '../components/ProviderRubricPanel'
 import { ScenarioList } from '../components/ScenarioList'
 import { UserHeader } from '../components/UserHeader'
 import {
-  AvatarConnectionDiagnostics,
-  ConnectionStage,
-  VideoPanel,
+    AvatarConnectionDiagnostics,
+    ConnectionStage,
+    VideoPanel,
 } from '../components/VideoPanel'
 import { useAudioPlayer } from '../hooks/useAudioPlayer'
 import { useAuth } from '../hooks/useAuth'
@@ -47,7 +47,7 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: tokens.colorNeutralBackground3,
+    background: 'linear-gradient(180deg, #f4f9ff 0%, #edf5ff 100%)',
     padding: tokens.spacingVerticalL,
   },
   brandingBar: {
@@ -127,6 +127,7 @@ export default function App() {
   const [previousView, setPreviousView] = useState<AppView>('setup')
   const [showLoading, setShowLoading] = useState(false)
   const [showAssessment, setShowAssessment] = useState(false)
+  const [selectedVisitType, setSelectedVisitType] = useState('new-visit')
   const [currentAgent, setCurrentAgent] = useState<string | null>(null)
   const [assessment, setAssessment] = useState<Assessment | null>(null)
   const [analysisError, setAnalysisError] = useState<string | null>(null)
@@ -141,7 +142,7 @@ export default function App() {
     string | null
   >(null)
   const [showAllPractices, setShowAllPractices] = useState(false)
-  const [appName, setAppName] = useState<string>('Clinical Voice Assistant')
+  const [appName, setAppName] = useState<string>('Special Olympics MedBuddy')
 
   // Clinical session state
   const [patientLanguage, setPatientLanguage] = useState<string>('en')
@@ -336,8 +337,8 @@ export default function App() {
           timestamp: new Date(),
         }
         setSimplifiedEntries(prev => [...prev, entry])
-        // Simplify asynchronously and update the entry in place
-        if (speaker === 'doctor' && text.trim()) {
+
+        if (text.trim()) {
           api
             .simplifyTranscript(text, 'plain', patientLanguage)
             .then(simplified => {
@@ -345,7 +346,9 @@ export default function App() {
                 prev.map(e => (e.id === entry.id ? { ...e, simplifiedText: simplified } : e))
               )
             })
-            .catch(() => {/* simplification is best-effort */})
+            .catch(() => {
+              // simplification is best-effort; keep original text if it fails
+            })
         }
       },
       [patientLanguage]
@@ -373,20 +376,20 @@ export default function App() {
     getAudioRecording,
   } = useRecorder(sendAudioChunk)
 
-  const handleStart = async (avatarValue: string) => {
+  const handleStart = async (visitType: string) => {
     if (!selectedScenario) return
 
-    const parsedAvatar = parseAvatarValue(avatarValue)
-    const isAudioOnly = parsedAvatar === null
+    const parsedAvatar = parseAvatarValue('audio-only')
+    const isAudioOnly = true
     setAvatarConfig(parsedAvatar)
-    setAvatarEnabled(!isAudioOnly)
-    setShowAvatar(!isAudioOnly)
+    setAvatarEnabled(false)
+    setShowAvatar(false)
 
     setConnectionStage('creating')
     setAvatarDiagnostics({
       startedAt: Date.now(),
       lastUpdatedAt: Date.now(),
-      message: 'Creating practice session',
+      message: 'Creating visit session',
       voiceSocket: 'waiting',
       browserConnection: 'waiting',
       networkRelay: 'waiting',
@@ -400,15 +403,16 @@ export default function App() {
       if (!isAudioOnly) {
         setConnectionStage('connecting')
         updateAvatarDiagnostics({
-          message: 'Practice session created; opening voice connection',
+          message: 'Visit session created; opening voice connection',
         })
       }
       setCurrentAgent(agent_id)
+      setSelectedVisitType(visitType)
       setCurrentView('practice')
     } catch (error) {
       console.error('Failed to create agent:', error)
       updateAvatarDiagnostics({
-        message: 'Could not create the practice session',
+        message: 'Could not create the visit session',
         warning:
           error instanceof Error ? error.message : 'Failed to create agent.',
       })
@@ -542,7 +546,7 @@ export default function App() {
       {currentView !== 'setup' && (
         <div className={styles.brandingBar}>
           <img
-            src="/images/favicon-32x32.png"
+            src="/images/special-olympics-logo.svg"
             alt={appName}
             className={styles.brandingLogo}
           />
@@ -563,6 +567,8 @@ export default function App() {
               selectedScenario={selectedScenario}
               onSelect={setSelectedScenario}
               onStart={handleStart}
+              selectedVisitType={selectedVisitType}
+              onVisitTypeChange={setSelectedVisitType}
               isAuthenticated={authenticated}
               onNavigateToConversations={navigateToConversations}
               isTrainer={isTrainer}
