@@ -4,12 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-    Button,
-    Card,
-    CardHeader,
-    Text,
-    makeStyles,
-    tokens,
+  Button,
+  CardHeader,
+  Text,
+  makeStyles,
+  tokens
 } from '@fluentui/react-components'
 import { History24Regular, People24Regular } from '@fluentui/react-icons'
 import { Scenario } from '../types'
@@ -36,26 +35,59 @@ const useStyles = makeStyles({
     maxWidth: '420px',
     textAlign: 'center',
   },
-  cardsGrid: {
+  visitDateTime: {
+    marginTop: tokens.spacingVerticalXS,
+    color: '#1d5b9f',
+    fontWeight: 600,
+  },
+  formGrid: {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: tokens.spacingVerticalM,
-    gridColumn: '1 / span 2',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+    gap: tokens.spacingHorizontalM,
     width: '100%',
-    '@media (max-width: 600px)': {
-      gridTemplateColumns: '1fr',
-    },
+    marginTop: tokens.spacingVerticalM,
+    marginBottom: tokens.spacingVerticalM,
   },
-  card: {
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-    '&:hover': {
-      transform: 'translateY(-2px)',
-      boxShadow: tokens.shadow16,
-    },
+  field: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacingVerticalXS,
+    textAlign: 'left',
   },
-  selected: {
+  input: {
+    width: '100%',
+    borderRadius: tokens.borderRadiusMedium,
+    border: `1px solid ${tokens.colorNeutralStroke2}`,
+    backgroundColor: tokens.colorNeutralBackground1,
+    padding: `${tokens.spacingVerticalS} ${tokens.spacingHorizontalM}`,
+    fontSize: '14px',
+    lineHeight: '20px',
+    color: tokens.colorNeutralForeground1,
+    outline: 'none',
+    boxSizing: 'border-box',
+  },
+  consentRow: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: tokens.spacingHorizontalS,
+    textAlign: 'left',
+    marginTop: tokens.spacingVerticalS,
+    marginBottom: tokens.spacingVerticalM,
+    color: '#3b4a5d',
+  },
+  checkbox: {
+    width: '18px',
+    height: '18px',
+    marginTop: '2px',
+    accentColor: '#1d5b9f',
+  },
+  scenarioCard: {
+    width: '100%',
+    padding: tokens.spacingVerticalL,
+    borderRadius: tokens.borderRadiusLarge,
     backgroundColor: tokens.colorBrandBackground2,
+    border: `1px solid ${tokens.colorBrandStroke1}`,
+    boxShadow: tokens.shadow8,
   },
   actions: {
     gridColumn: '1 / -1',
@@ -112,6 +144,13 @@ interface Props {
   appName?: string
   selectedVisitType?: string
   onVisitTypeChange?: (visitType: string) => void
+  visitDateTime?: string
+  patientName?: string
+  patientId?: string
+  consentConfirmed?: boolean
+  onPatientNameChange?: (value: string) => void
+  onPatientIdChange?: (value: string) => void
+  onConsentChange?: (checked: boolean) => void
 }
 
 export function ScenarioList({
@@ -126,6 +165,13 @@ export function ScenarioList({
   appName,
   selectedVisitType = 'new-visit',
   onVisitTypeChange,
+  visitDateTime,
+  patientName = '',
+  patientId = '',
+  consentConfirmed = false,
+  onPatientNameChange,
+  onPatientIdChange,
+  onConsentChange,
 }: Props) {
   const styles = useStyles()
 
@@ -148,7 +194,52 @@ export function ScenarioList({
         <Text size={200} className={styles.subtitle}>
           Doctor-approved patient visit capture for inclusive care and follow-up support.
         </Text>
+        {visitDateTime && (
+          <Text size={200} className={styles.visitDateTime}>
+            Visit date & time: {visitDateTime}
+          </Text>
+        )}
       </div>
+
+      <div className={styles.formGrid}>
+        <label className={styles.field}>
+          <Text size={200} weight="semibold">
+            Patient name
+          </Text>
+          <input
+            type="text"
+            value={patientName}
+            onChange={event => onPatientNameChange?.(event.target.value)}
+            className={styles.input}
+            placeholder="Enter patient name"
+          />
+        </label>
+
+        <label className={styles.field}>
+          <Text size={200} weight="semibold">
+            Patient ID / Visit ID
+          </Text>
+          <input
+            type="text"
+            value={patientId}
+            onChange={event => onPatientIdChange?.(event.target.value)}
+            className={styles.input}
+            placeholder="Optional"
+          />
+        </label>
+      </div>
+
+      <label className={styles.consentRow}>
+        <input
+          type="checkbox"
+          checked={consentConfirmed}
+          onChange={event => onConsentChange?.(event.target.checked)}
+          className={styles.checkbox}
+        />
+        <Text size={200}>
+          Patient or guardian has provided consent to record and summarize this visit.
+        </Text>
+      </label>
 
       <div className={styles.visitTypeGrid}>
         {visitTypes.map(visitType => {
@@ -175,24 +266,16 @@ export function ScenarioList({
         })}
       </div>
 
-      {/* Server-side scenarios */}
-      <div className={styles.cardsGrid}>
-        {scenarios.map(scenario => {
-          const isSelected = selectedScenario === scenario.id
-
-          return (
-            <Card
-              key={scenario.id}
-              className={`${styles.card} ${isSelected ? styles.selected : ''}`}
-              onClick={() => onSelect(scenario.id)}
-            >
-              <CardHeader
-                header={<Text weight="semibold">{scenario.name}</Text>}
-                description={<Text size={200}>{scenario.description}</Text>}
-              />
-            </Card>
-          )
-        })}
+      <div className={styles.scenarioCard}>
+        <CardHeader
+          header={<Text weight="semibold" size={500}>{scenarios[0]?.name ?? 'General Consultation'}</Text>}
+          description={
+            <Text size={200}>
+              {scenarios[0]?.description ??
+                'Conversation between a patient and doctor about the visit, symptoms, concerns, and the follow-up plan.'}
+            </Text>
+          }
+        />
       </div>
 
       <div className={styles.actions}>
@@ -218,9 +301,9 @@ export function ScenarioList({
         </div>
         <Button
           appearance="primary"
-          disabled={!selectedScenario}
           onClick={() => onStart(selectedVisitType)}
           size="large"
+          disabled={!consentConfirmed}
         >
           Start Visit
         </Button>

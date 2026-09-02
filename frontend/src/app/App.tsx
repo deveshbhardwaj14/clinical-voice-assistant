@@ -143,6 +143,10 @@ export default function App() {
   >(null)
   const [showAllPractices, setShowAllPractices] = useState(false)
   const [appName, setAppName] = useState<string>('Special Olympics MedBuddy')
+  const [visitTimestamp, setVisitTimestamp] = useState<Date>(new Date())
+  const [patientName, setPatientName] = useState<string>('')
+  const [patientId, setPatientId] = useState<string>('')
+  const [consentConfirmed, setConsentConfirmed] = useState(false)
 
   // Clinical session state
   const [patientLanguage, setPatientLanguage] = useState<string>('en')
@@ -166,6 +170,19 @@ export default function App() {
       })
       .catch(() => {})
   }, [])
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setVisitTimestamp(new Date())
+    }, 60000)
+
+    return () => window.clearInterval(intervalId)
+  }, [])
+
+  const visitDateTimeLabel = new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(visitTimestamp)
 
   const navigateToConversations = useCallback(() => {
     setPreviousView(currentView)
@@ -378,6 +395,7 @@ export default function App() {
 
   const handleStart = async (visitType: string) => {
     if (!selectedScenario) return
+    if (!consentConfirmed) return
 
     const parsedAvatar = parseAvatarValue('audio-only')
     const isAudioOnly = true
@@ -574,6 +592,13 @@ export default function App() {
               isTrainer={isTrainer}
               onNavigateToAllPractices={navigateToAllPractices}
               appName={appName}
+              visitDateTime={visitDateTimeLabel}
+              patientName={patientName}
+              patientId={patientId}
+              consentConfirmed={consentConfirmed}
+              onPatientNameChange={setPatientName}
+              onPatientIdChange={setPatientId}
+              onConsentChange={setConsentConfirmed}
             />
           )}
         </div>
