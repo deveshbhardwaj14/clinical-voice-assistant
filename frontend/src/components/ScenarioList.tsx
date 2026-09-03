@@ -206,6 +206,24 @@ export function ScenarioList({
       <div className={styles.formGrid}>
         <label className={styles.field}>
           <Text size={200} weight="semibold">
+            Scenario
+          </Text>
+          <select
+            value={selectedScenario ?? ''}
+            onChange={event => onSelect?.(event.target.value)}
+            className={styles.input}
+            aria-label="Select visit scenario"
+          >
+            {scenarios.map(scenario => (
+              <option key={scenario.id} value={scenario.id}>
+                {scenario.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className={styles.field}>
+          <Text size={200} weight="semibold">
             Patient name
           </Text>
           <input
