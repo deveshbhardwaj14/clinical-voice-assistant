@@ -70,6 +70,7 @@ const useStyles = makeStyles({
     height: '90vh',
     display: 'flex',
     gap: tokens.spacingHorizontalL,
+    minHeight: 0,
   },
   hiddenAvatarPanel: {
     display: 'none',
@@ -106,9 +107,11 @@ const useStyles = makeStyles({
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     gap: tokens.spacingHorizontalL,
+    minHeight: 0,
   },
   resultsPanel: {
     height: '100%',
+    minHeight: 0,
     overflowY: 'auto',
     padding: tokens.spacingVerticalM,
   },
@@ -117,6 +120,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
+    minHeight: 0,
     overflowY: 'hidden',
   },
 })

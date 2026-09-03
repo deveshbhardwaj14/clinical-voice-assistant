@@ -31,6 +31,8 @@ const useStyles = makeStyles({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
+    minHeight: 0,
+    overflow: 'hidden',
     padding: '12px 14px 14px',
     backgroundColor: '#f7f9fb',
     border: `1px solid ${tokens.colorNeutralStroke2}`,
@@ -46,6 +48,7 @@ const useStyles = makeStyles({
   },
   messages: {
     flex: 1,
+    minHeight: 0,
     overflowY: 'auto',
     backgroundColor: '#edf3f8',
     border: `1px solid ${tokens.colorNeutralStroke2}`,

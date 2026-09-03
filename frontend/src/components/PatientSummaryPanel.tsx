@@ -32,8 +32,11 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     gap: tokens.spacingVerticalL,
+    minHeight: 0,
+    maxHeight: '100%',
     overflowY: 'auto',
     paddingRight: tokens.spacingHorizontalXS,
+    boxSizing: 'border-box',
   },
   headerCard: {
     backgroundColor: tokens.colorBrandBackground2,
