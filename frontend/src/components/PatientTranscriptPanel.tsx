@@ -64,6 +64,10 @@ const useStyles = makeStyles({
   entryCard: {
     padding: `${tokens.spacingVerticalS} ${tokens.spacingHorizontalM}`,
     borderRadius: tokens.borderRadiusMedium,
+    minHeight: '52px',
+    overflowWrap: 'anywhere',
+    wordBreak: 'break-word',
+    whiteSpace: 'pre-wrap',
   },
   doctorCard: {
     backgroundColor: tokens.colorNeutralBackground2,
@@ -74,6 +78,7 @@ const useStyles = makeStyles({
     borderLeft: `3px solid ${tokens.colorPaletteGreenBackground3}`,
   },
   speakerLabel: {
+    display: 'block',
     fontWeight: 600,
     marginBottom: tokens.spacingVerticalXXS,
     color: tokens.colorNeutralForeground2,
@@ -82,15 +87,23 @@ const useStyles = makeStyles({
     letterSpacing: '0.5px',
   },
   simplifiedText: {
+    display: 'block',
     fontSize: tokens.fontSizeBase400,
     lineHeight: tokens.lineHeightBase400,
     color: tokens.colorNeutralForeground1,
+    overflowWrap: 'anywhere',
+    wordBreak: 'break-word',
+    whiteSpace: 'pre-wrap',
   },
   originalText: {
+    display: 'block',
     fontSize: tokens.fontSizeBase200,
     color: tokens.colorNeutralForeground3,
     marginTop: tokens.spacingVerticalXXS,
     fontStyle: 'italic',
+    overflowWrap: 'anywhere',
+    wordBreak: 'break-word',
+    whiteSpace: 'pre-wrap',
   },
 })
 
