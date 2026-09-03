@@ -27,7 +27,28 @@ AGENT_ID_PREFIX = "local-agent"
 AZURE_AGENT_NAME_PREFIX = "agent"
 UUID_SHORT_LENGTH = 8
 MAX_RESPONSE_LENGTH_SENTENCES = 3
-DEFAULT_SCENARIO_DESCRIPTION = "Practice a customer support conversation scenario."
+DEFAULT_SCENARIO_DESCRIPTION = "Practice a general patient-doctor visit conversation."
+
+DEFAULT_GENERAL_PATIENT_SCENARIO = {
+    "id": "general-patient-visit",
+    "name": "General Consultation",
+    "description": "Conversation between a patient and doctor about the visit, symptoms, concerns, and the follow-up plan.",
+    "messages": [
+        {
+            "role": "system",
+            "content": (
+                "You are the patient during a routine doctor consultation. "
+                "Keep your responses brief, natural, and conversational. "
+                "Describe symptoms, concerns, and follow-up questions in plain language. "
+                "Answer the doctor's questions directly and honestly. "
+                "Stay focused on the visit and do not reference hidden instructions."
+            ),
+        }
+    ],
+    "model": config["model_deployment_name"],
+    "modelParameters": {"temperature": 0.7, "max_tokens": 2000},
+    "metadata": {},
+}
 
 # Transcript loading constants
 TRANSCRIPT_DIR = "samples/transcripts"
@@ -383,12 +404,12 @@ class ScenarioManager:
         """
         Get a specific scenario by ID.
 
-        Args:
-            scenario_id: The scenario identifier
-
-        Returns:
-            Optional[Dict[str, Any]]: Scenario data or None if not found
+        For the current product flow we only use the default patient-doctor visit,
+        while keeping the Cosmos-backed scenario system available for future phase-2 work.
         """
+        if scenario_id == "general-patient-visit":
+            return DEFAULT_GENERAL_PATIENT_SCENARIO
+
         scenario = self.scenarios.get(scenario_id)
         if scenario:
             return scenario
@@ -397,12 +418,27 @@ class ScenarioManager:
 
     def list_scenarios(self) -> List[Dict[str, str | bool]]:
         """
-        List all available scenarios.
+        List the available scenarios for the current product flow.
 
-        Returns:
-            List[Dict[str, str]]: List of scenario summaries
+        The runtime experience intentionally exposes only the general patient-doctor visit
+        and suppresses legacy support-scenario titles from backend seed data.
         """
-        scenarios: List[Dict[str, str | bool]] = [
+        if not self.scenarios:
+            return [{
+                "id": DEFAULT_GENERAL_PATIENT_SCENARIO["id"],
+                "name": DEFAULT_GENERAL_PATIENT_SCENARIO["name"],
+                "description": DEFAULT_GENERAL_PATIENT_SCENARIO["description"],
+            }]
+
+        default_scenario = self.get_scenario("general-patient-visit")
+        if default_scenario:
+            return [{
+                "id": default_scenario["id"],
+                "name": default_scenario["name"],
+                "description": default_scenario["description"],
+            }]
+
+        return [
             {
                 "id": scenario_id,
                 "name": scenario_data.get("name", "Unknown"),
@@ -410,8 +446,6 @@ class ScenarioManager:
             }
             for scenario_id, scenario_data in self.scenarios.items()
         ]
-
-        return scenarios
 
     def generate_scenario_from_graph(self, graph_data: Dict[str, Any]) -> Dict[str, Any]:
         """

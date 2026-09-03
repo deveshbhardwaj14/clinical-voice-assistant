@@ -5,7 +5,6 @@
 
 import {
   Button,
-  CardHeader,
   Text,
   makeStyles,
   tokens
@@ -206,24 +205,6 @@ export function ScenarioList({
       <div className={styles.formGrid}>
         <label className={styles.field}>
           <Text size={200} weight="semibold">
-            Scenario
-          </Text>
-          <select
-            value={selectedScenario ?? ''}
-            onChange={event => onSelect?.(event.target.value)}
-            className={styles.input}
-            aria-label="Select visit scenario"
-          >
-            {scenarios.map(scenario => (
-              <option key={scenario.id} value={scenario.id}>
-                {scenario.name}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className={styles.field}>
-          <Text size={200} weight="semibold">
             Patient name
           </Text>
           <input
@@ -290,18 +271,6 @@ export function ScenarioList({
             </div>
           )
         })}
-      </div>
-
-      <div className={styles.scenarioCard}>
-        <CardHeader
-          header={<Text weight="semibold" size={500}>{scenarios[0]?.name ?? 'General Consultation'}</Text>}
-          description={
-            <Text size={200}>
-              {scenarios[0]?.description ??
-                'Conversation between a patient and doctor about the visit, symptoms, concerns, and the follow-up plan.'}
-            </Text>
-          }
-        />
       </div>
 
       <div className={styles.actions}>

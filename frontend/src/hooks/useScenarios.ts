@@ -4,47 +4,45 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { useCallback, useEffect, useState } from 'react'
-import { api } from '../services/api'
 import { Scenario } from '../types'
 
+const DEFAULT_GENERAL_SCENARIO: Scenario = {
+  id: 'general-patient-visit',
+  name: 'General Consultation',
+  description:
+    'Conversation between a patient and doctor about the visit, symptoms, concerns, and the follow-up plan.',
+}
+
 export function useScenarios() {
-  const [scenarios, setScenarios] = useState<Scenario[]>([])
-  const [selectedScenario, setSelectedScenario] = useState<string | null>(null)
+  const [scenarios, setScenarios] = useState<Scenario[]>([DEFAULT_GENERAL_SCENARIO])
+  const [selectedScenario, setSelectedScenario] = useState<string | null>(DEFAULT_GENERAL_SCENARIO.id)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Load scenarios on mount
+  // Load scenarios on mount.
+  // The product is intentionally simplified to a single general patient-doctor visit flow.
   useEffect(() => {
-    // Load server scenarios
-    api
-      .getScenarios()
-      .then(s => {
-        setScenarios(s)
-        setError(null)
-      })
-      .catch((err: Error) => {
-        // Surface backend auth/IMDS failures instead of silently rendering an
-        // empty list. The error message includes the diagnostic code so ops
-        // can correlate it with backend logs.
-        console.error('Failed to load scenarios:', err)
-        setError(err.message ?? 'Failed to load scenarios')
-        setScenarios([])
-      })
-      .finally(() => setLoading(false))
+    const nextScenarios = [DEFAULT_GENERAL_SCENARIO]
+    setScenarios(nextScenarios)
+    setSelectedScenario(DEFAULT_GENERAL_SCENARIO.id)
+    setError(null)
+    setLoading(false)
   }, [])
 
   const refreshScenarios = useCallback(async () => {
     setLoading(true)
     try {
-      const updatedScenarios = await api.getScenarios()
-      setScenarios(updatedScenarios)
+      const nextScenarios = [DEFAULT_GENERAL_SCENARIO]
+      setScenarios(nextScenarios)
+      setSelectedScenario(DEFAULT_GENERAL_SCENARIO.id)
       setError(null)
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Failed to refresh scenarios'
       console.error('Failed to refresh scenarios:', err)
       setError(message)
-      setScenarios([])
+      setScenarios([DEFAULT_GENERAL_SCENARIO])
+      setSelectedScenario(DEFAULT_GENERAL_SCENARIO.id)
     } finally {
       setLoading(false)
     }
