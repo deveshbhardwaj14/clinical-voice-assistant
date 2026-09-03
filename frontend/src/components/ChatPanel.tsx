@@ -4,25 +4,25 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-    Button,
-    Card,
-    MessageBar,
-    MessageBarActions,
-    MessageBarBody,
-    MessageBarTitle,
-    Switch,
-    Text,
-    makeStyles,
-    tokens,
+  Button,
+  Card,
+  MessageBar,
+  MessageBarActions,
+  MessageBarBody,
+  MessageBarTitle,
+  Switch,
+  Text,
+  makeStyles,
+  tokens,
 } from '@fluentui/react-components'
 import {
-    ChartMultipleRegular,
-    DeleteRegular,
-    DismissRegular,
-    History20Regular,
-    MicOffRegular,
-    MicRegular,
-    People20Regular,
+  ChartMultipleRegular,
+  DeleteRegular,
+  DismissRegular,
+  History20Regular,
+  MicOffRegular,
+  MicRegular,
+  People20Regular,
 } from '@fluentui/react-icons'
 import { Message, Scenario } from '../types'
 
@@ -31,13 +31,15 @@ const useStyles = makeStyles({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    padding: tokens.spacingVerticalM,
+    padding: '12px 14px 14px',
+    backgroundColor: '#f7f9fb',
+    border: `1px solid ${tokens.colorNeutralStroke2}`,
   },
   header: {
-    marginBottom: tokens.spacingVerticalM,
+    marginBottom: tokens.spacingVerticalXS,
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.spacingVerticalXS,
+    gap: 0,
   },
   headerDescription: {
     color: tokens.colorNeutralForeground3,
@@ -45,9 +47,10 @@ const useStyles = makeStyles({
   messages: {
     flex: 1,
     overflowY: 'auto',
-    border: `1px solid ${tokens.colorNeutralStroke1}`,
+    backgroundColor: '#edf3f8',
+    border: `1px solid ${tokens.colorNeutralStroke2}`,
     borderRadius: tokens.borderRadiusMedium,
-    padding: tokens.spacingVerticalM,
+    padding: `${tokens.spacingVerticalS} ${tokens.spacingHorizontalS}`,
     marginBottom: tokens.spacingVerticalM,
   },
   placeholder: {
@@ -59,17 +62,32 @@ const useStyles = makeStyles({
     color: tokens.colorNeutralForeground3,
   },
   message: {
-    padding: tokens.spacingVerticalS,
-    marginBottom: tokens.spacingVerticalS,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacingVerticalXXS,
+    padding: `${tokens.spacingVerticalXS} ${tokens.spacingHorizontalM}`,
+    marginBottom: tokens.spacingVerticalXS,
     borderRadius: tokens.borderRadiusMedium,
+    lineHeight: '1.4',
+    boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.02)',
+    border: '1px solid rgba(0,0,0,0.03)',
   },
   userMessage: {
-    backgroundColor: tokens.colorBrandBackground2,
-    marginLeft: '20%',
+    backgroundColor: '#eef5ff',
+    marginLeft: '4%',
+    marginRight: '4%',
   },
   assistantMessage: {
-    backgroundColor: tokens.colorNeutralBackground2,
-    marginRight: '20%',
+    backgroundColor: '#f1f3f5',
+    marginLeft: '4%',
+    marginRight: '4%',
+  },
+  label: {
+    fontSize: tokens.fontSizeBase200,
+    fontWeight: 700,
+    letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    color: tokens.colorNeutralForeground3,
   },
   controls: {
     display: 'flex',
@@ -136,9 +154,6 @@ export function ChatPanel({
           <Text size={500} weight="semibold" block>
             {scenario.name}
           </Text>
-          <Text size={300} block className={styles.headerDescription}>
-            {scenario.description}
-          </Text>
         </div>
       )}
 
@@ -166,6 +181,9 @@ export function ChatPanel({
                       : styles.assistantMessage
                   }`}
                 >
+                  <Text className={styles.label}>
+                    {msg.role === 'user' ? 'Patient' : 'Clinician'}
+                  </Text>
                   <Text size={300}>{msg.content}</Text>
                 </div>
               ))}
