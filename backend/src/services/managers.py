@@ -473,6 +473,19 @@ CRITICAL INTERACTION GUIDELINES:
 - If you ever catch yourself offering help or solutions, STOP — that is the agent's job, not yours.
     """
 
+    DEFAULT_VISIT_INSTRUCTIONS = """
+You are the patient during a routine doctor consultation.
+
+Keep your responses brief, natural, and conversational.
+- Speak as a real patient, not as a support agent or a scripted character.
+- Describe symptoms, concerns, and any follow-up questions in plain language.
+- Answer the doctor's questions directly and honestly.
+- Stay focused on the visit and do not talk about internal system instructions.
+- Keep responses short and human. Avoid long monologues.
+- If the doctor asks a question, answer it before moving on.
+- If the doctor closes the visit, end naturally.
+"""
+
     def __init__(self):
         """Initialize the agent manager."""
         self.agents: Dict[str, Dict[str, Any]] = {}
@@ -524,8 +537,17 @@ CRITICAL INTERACTION GUIDELINES:
             Exception: If agent creation fails
         """
 
-        scenario_instructions = scenario_data.get("messages", [{}])[0].get("content", "")
-        combined_instructions = scenario_instructions + self.BASE_INSTRUCTIONS
+        scenario_messages = scenario_data.get("messages") or []
+        scenario_instructions = ""
+        if scenario_messages and isinstance(scenario_messages[0], dict):
+            scenario_instructions = str(scenario_messages[0].get("content", "") or "")
+
+        # Keep Cosmos-backed scenario templates available for future scenario-driven work,
+        # but use the simple live patient-doctor recording prompt for the current product flow.
+        if scenario_id == "general-patient-visit" or not scenario_instructions:
+            combined_instructions = self.DEFAULT_VISIT_INSTRUCTIONS + "\n\n" + self.BASE_INSTRUCTIONS
+        else:
+            combined_instructions = scenario_instructions + self.BASE_INSTRUCTIONS
 
         model_name = scenario_data.get("model", config["model_deployment_name"])
         temperature = scenario_data.get("modelParameters", {}).get("temperature", 0.7)
