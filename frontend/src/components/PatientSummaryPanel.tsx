@@ -64,12 +64,24 @@ const useStyles = makeStyles({
     color: tokens.colorBrandForeground1,
     fontWeight: tokens.fontWeightSemibold,
   },
+  bodyText: {
+    whiteSpace: 'pre-wrap',
+    overflowWrap: 'anywhere',
+    wordBreak: 'break-word',
+    lineHeight: tokens.lineHeightBase400,
+  },
   bulletList: {
     margin: 0,
     padding: `0 0 0 ${tokens.spacingHorizontalL}`,
     display: 'flex',
     flexDirection: 'column',
     gap: tokens.spacingVerticalXS,
+  },
+  bulletText: {
+    whiteSpace: 'pre-wrap',
+    overflowWrap: 'anywhere',
+    wordBreak: 'break-word',
+    lineHeight: tokens.lineHeightBase400,
   },
   medicationCard: {
     padding: tokens.spacingVerticalM,
@@ -115,12 +127,12 @@ export function PatientSummaryPanel({ summary, visitType, onDownload }: Props) {
             </Text>
           }
         />
-        <Text>{summary.visit_reason}</Text>
+        <Text className={styles.bodyText}>{summary.visit_reason}</Text>
 
         {summary.diagnosis_or_findings && (
           <div className={styles.section} style={{ marginTop: tokens.spacingVerticalM }}>
             <Text weight="semibold">What the doctor found:</Text>
-            <Text>{summary.diagnosis_or_findings}</Text>
+            <Text className={styles.bodyText}>{summary.diagnosis_or_findings}</Text>
           </div>
         )}
 
@@ -130,7 +142,7 @@ export function PatientSummaryPanel({ summary, visitType, onDownload }: Props) {
             <ul className={styles.bulletList}>
               {summary.what_was_discussed.map((item, i) => (
                 <li key={i}>
-                  <Text>{item}</Text>
+                  <Text className={styles.bulletText}>{item}</Text>
                 </li>
               ))}
             </ul>
@@ -156,7 +168,9 @@ export function PatientSummaryPanel({ summary, visitType, onDownload }: Props) {
                   {med.purpose}
                 </Badge>
               </Text>
-              <Text className={styles.medicationDetail}>{med.instructions}</Text>
+              <Text className={`${styles.medicationDetail} ${styles.bodyText}`}>
+                {med.instructions}
+              </Text>
             </div>
           ))}
         </Card>
@@ -175,7 +189,7 @@ export function PatientSummaryPanel({ summary, visitType, onDownload }: Props) {
           <ul className={styles.bulletList}>
             {summary.next_steps.map((step, i) => (
               <li key={i}>
-                <Text>{step}</Text>
+                <Text className={styles.bulletText}>{step}</Text>
               </li>
             ))}
           </ul>
@@ -192,7 +206,7 @@ export function PatientSummaryPanel({ summary, visitType, onDownload }: Props) {
               </Text>
             }
           />
-          <Text>{summary.follow_up}</Text>
+          <Text className={styles.bodyText}>{summary.follow_up}</Text>
         </Card>
       )}
 
@@ -204,7 +218,7 @@ export function PatientSummaryPanel({ summary, visitType, onDownload }: Props) {
           <ul className={styles.bulletList}>
             {summary.questions_to_ask_next_time.map((q, i) => (
               <li key={i}>
-                <Text>{q}</Text>
+                <Text className={styles.bulletText}>{q}</Text>
               </li>
             ))}
           </ul>

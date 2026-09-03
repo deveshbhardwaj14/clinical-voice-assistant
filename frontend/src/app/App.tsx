@@ -35,7 +35,7 @@ import { useRecorder } from '../hooks/useRecorder'
 import { useScenarios } from '../hooks/useScenarios'
 import { useWebRTC } from '../hooks/useWebRTC'
 import { api, AvatarConfig, parseAvatarValue } from '../services/api'
-import { Assessment, PatientSummary, SimplifiedTranscriptEntry } from '../types'
+import { Assessment, PATIENT_LANGUAGES, PatientSummary, ReadingLevel, SimplifiedTranscriptEntry } from '../types'
 
 type AppView = 'setup' | 'practice' | 'results' | 'conversations' | 'conversationDetail'
 const RELEASE_VERSION = 'v0.0.2'
@@ -157,6 +157,7 @@ export default function App() {
 
   // Clinical session state
   const [patientLanguage, setPatientLanguage] = useState<string>('en')
+  const [readingLevel, setReadingLevel] = useState<ReadingLevel>('plain')
   const [simplifiedEntries, setSimplifiedEntries] = useState<SimplifiedTranscriptEntry[]>([])
   const [patientSummary, setPatientSummary] = useState<PatientSummary | null>(null)
   const [providerAssessment, setProviderAssessment] = useState<Assessment | null>(null)
@@ -364,7 +365,7 @@ export default function App() {
 
         if (text.trim()) {
           api
-            .simplifyTranscript(text, 'plain', patientLanguage)
+            .simplifyTranscript(text, readingLevel, patientLanguage)
             .then(simplified => {
               setSimplifiedEntries(prev =>
                 prev.map(e => (e.id === entry.id ? { ...e, simplifiedText: simplified } : e))
@@ -375,7 +376,7 @@ export default function App() {
             })
         }
       },
-      [patientLanguage]
+      [patientLanguage, readingLevel]
     ),
     onConnectionStatus: updateAvatarDiagnostics,
   })
@@ -635,6 +636,11 @@ export default function App() {
                 if (value) setStartVisitError(null)
               }}
               startVisitError={startVisitError}
+              patientLanguage={patientLanguage}
+              onPatientLanguageChange={setPatientLanguage}
+              readingLevel={readingLevel}
+              onReadingLevelChange={setReadingLevel}
+              languageOptions={PATIENT_LANGUAGES}
             />
           )}
         </div>
@@ -773,7 +779,11 @@ export default function App() {
             )}
           </div>
           <div className={styles.resultsPanel}>
-            {providerAssessment ? (
+            {analysisError ? (
+              <Text style={{ color: tokens.colorPaletteRedForeground1, whiteSpace: 'pre-wrap' }}>
+                {analysisError}
+              </Text>
+            ) : providerAssessment ? (
               <ProviderRubricPanel assessment={providerAssessment} />
             ) : (
               <Text style={{ color: tokens.colorNeutralForeground3 }}>

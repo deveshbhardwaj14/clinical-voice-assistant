@@ -238,7 +238,12 @@ class VoiceProxyHandler:
 
         session = RequestSession(
             modalities=[Modality.TEXT, Modality.AUDIO, Modality.AVATAR],
-            turn_detection=AzureSemanticVad(type=DEFAULT_TURN_DETECTION_TYPE),
+            # Recorder mode: VAD segments audio for transcription but the model
+            # never generates a spoken response — this is pure patient/doctor capture.
+            turn_detection=AzureSemanticVad(
+                create_response=False,
+                interrupt_response=False,
+            ),
             input_audio_transcription=AudioInputTranscriptionOptions(
                 model=transcription_model,
                 language=transcription_language,

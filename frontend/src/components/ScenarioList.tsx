@@ -10,7 +10,7 @@ import {
   tokens
 } from '@fluentui/react-components'
 import { History24Regular, People24Regular } from '@fluentui/react-icons'
-import { Scenario } from '../types'
+import { PatientLanguageOption, ReadingLevel, Scenario } from '../types'
 
 const useStyles = makeStyles({
   header: {
@@ -151,6 +151,11 @@ interface Props {
   onPatientIdChange?: (value: string) => void
   onConsentChange?: (checked: boolean) => void
   startVisitError?: string | null
+  patientLanguage?: string
+  onPatientLanguageChange?: (value: string) => void
+  readingLevel?: ReadingLevel
+  onReadingLevelChange?: (value: ReadingLevel) => void
+  languageOptions?: PatientLanguageOption[]
 }
 
 export function ScenarioList({
@@ -173,8 +178,19 @@ export function ScenarioList({
   onPatientIdChange,
   onConsentChange,
   startVisitError,
+  patientLanguage = 'en',
+  onPatientLanguageChange,
+  readingLevel = 'plain',
+  onReadingLevelChange,
+  languageOptions,
 }: Props) {
   const styles = useStyles()
+
+  const readingLevels: { id: ReadingLevel; label: string }[] = [
+    { id: 'plain', label: 'Plain language' },
+    { id: 'grade_5', label: '5th grade reading level' },
+    { id: 'grade_8', label: '8th grade reading level' },
+  ]
 
   const visitTypes = [
     { id: 'new-visit', label: 'New Visit' },
@@ -227,6 +243,42 @@ export function ScenarioList({
             className={styles.input}
             placeholder="Optional"
           />
+        </label>
+
+        <label className={styles.field}>
+          <Text size={200} weight="semibold">
+            Patient language
+          </Text>
+          <select
+            value={patientLanguage}
+            onChange={event => onPatientLanguageChange?.(event.target.value)}
+            className={styles.input}
+            aria-label="Patient language"
+          >
+            {(languageOptions ?? [{ code: 'en', label: 'English' }]).map(option => (
+              <option key={option.code} value={option.code}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className={styles.field}>
+          <Text size={200} weight="semibold">
+            Reading level
+          </Text>
+          <select
+            value={readingLevel}
+            onChange={event => onReadingLevelChange?.(event.target.value as ReadingLevel)}
+            className={styles.input}
+            aria-label="Reading level"
+          >
+            {readingLevels.map(option => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </label>
       </div>
 

@@ -121,11 +121,24 @@ export function ProviderRubricPanel({ assessment }: Props) {
   const [tab, setTab] = useState<'scores' | 'strengths' | 'improvements'>('scores')
 
   const ai = assessment.ai_assessment
+  const scoringError = assessment.diagnostics?.scoring_error
+
   if (!ai) {
     return (
-      <Text style={{ color: tokens.colorNeutralForeground3 }}>
-        Provider rubric not available.
-      </Text>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacingVerticalS }}>
+        <Text style={{ color: tokens.colorNeutralForeground3 }}>
+          Provider rubric not available.
+        </Text>
+        {scoringError ? (
+          <Text style={{ color: tokens.colorPaletteRedForeground1, whiteSpace: 'pre-wrap' }}>
+            {scoringError}
+          </Text>
+        ) : (
+          <Text style={{ color: tokens.colorNeutralForeground3 }}>
+            The conversation analysis did not return a rubric score for this visit.
+          </Text>
+        )}
+      </div>
     )
   }
 
