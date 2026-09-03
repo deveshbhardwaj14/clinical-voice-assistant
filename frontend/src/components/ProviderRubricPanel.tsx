@@ -22,9 +22,10 @@ interface Props {
 }
 
 const CRITERION_LABELS: Record<string, string> = {
-  empathy: 'Empathy & Patient-Centred Tone',
-  plain_language: 'Plain Language',
+  empathy: 'Empathy & Compassion',
+  plain_language: 'Plain Language & Health Literacy',
   active_listening: 'Active Listening',
+  non_patronizing_tone: 'Respectful, Non-Patronizing Tone',
   shared_decision_making: 'Shared Decision-Making',
   clarity_of_next_steps: 'Clarity of Next Steps',
   patient_education: 'Patient Education',

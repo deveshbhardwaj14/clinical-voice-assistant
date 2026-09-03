@@ -20,6 +20,73 @@ logger = logging.getLogger(__name__)
 # Constants
 UUID_SHORT_LENGTH = 8
 
+# Built-in rubric for the general patient-doctor visit, aligned with the
+# Special Olympics MedBuddy IDD-focused clinician feedback guidance. Used when
+# no rubric is seeded in Cosmos so the provider panel always has real criteria.
+DEFAULT_MEDBUDDY_RUBRIC: Dict[str, Any] = {
+    "rubricId": "medbuddy-default-idd",
+    "appliesTo": {"scenarioIds": ["general-patient-visit"]},
+    "scoring": {"scale": "1-5", "passThreshold": 3.5},
+    "criteria": [
+        {
+            "criterionId": "empathy",
+            "name": "Empathy & Compassion",
+            "description": (
+                "Warm, patient-centred tone; acknowledges emotions and lived experience without "
+                "dismissing concerns."
+            ),
+        },
+        {
+            "criterionId": "plain_language",
+            "name": "Plain Language & Health Literacy",
+            "description": (
+                "Avoids jargon; explains diagnoses, tests, and treatments in accessible language "
+                "the patient can act on."
+            ),
+        },
+        {
+            "criterionId": "active_listening",
+            "name": "Active Listening",
+            "description": (
+                "Lets the patient speak, reflects back what they said, and follows up on their "
+                "own words instead of switching topics."
+            ),
+        },
+        {
+            "criterionId": "non_patronizing_tone",
+            "name": "Respectful, Non-Patronizing Tone",
+            "description": (
+                "Addresses the patient directly (not only the caregiver), uses age-appropriate "
+                "language, and does not talk down to the patient."
+            ),
+        },
+        {
+            "criterionId": "shared_decision_making",
+            "name": "Shared Decision-Making",
+            "description": (
+                "Offers options, invites preferences, and reaches a plan together with the "
+                "patient and any support person present."
+            ),
+        },
+        {
+            "criterionId": "check_for_understanding",
+            "name": "Checking for Understanding",
+            "description": (
+                "Uses teach-back or open questions to confirm the patient understood the plan, "
+                "medications, and follow-up."
+            ),
+        },
+        {
+            "criterionId": "clarity_of_next_steps",
+            "name": "Clarity of Next Steps",
+            "description": (
+                "Concrete, memorable next steps for medications, appointments, and warning "
+                "signs to watch for."
+            ),
+        },
+    ],
+}
+
 
 class ConversationManager:
     """Loads evaluation rubrics from Cosmos DB and persists conversation records with evaluations."""
@@ -77,7 +144,12 @@ class ConversationManager:
 
     def get_rubric_for_scenario(self, scenario_id: str) -> Optional[Dict[str, Any]]:
         """Return the evaluation rubric applicable to a given scenario, if any."""
-        return self.rubrics.get(scenario_id)
+        seeded = self.rubrics.get(scenario_id)
+        if seeded:
+            return seeded
+        if scenario_id in DEFAULT_MEDBUDDY_RUBRIC["appliesTo"]["scenarioIds"]:
+            return DEFAULT_MEDBUDDY_RUBRIC
+        return None
 
     def reload_rubrics(self) -> None:
         """Clear and reload all rubrics from Cosmos after an admin write.
