@@ -40,6 +40,7 @@ from src.services.statistics_service import StatisticsFilters, parse_iso, statis
 from src.services.websocket_handler import VoiceProxyHandler
 from src.services.transcript_simplifier import TranscriptSimplifier
 from src.services.patient_summary import PatientSummaryGenerator
+from src.services.speaker_attributor import SpeakerAttributor
 
 # Constants
 STATIC_FOLDER = "../static"
@@ -62,6 +63,7 @@ API_GRAPH_SCENARIO_ENDPOINT = "/api/scenarios/graph"
 API_CLIENT_LOG_ENDPOINT = "/api/client-log"
 API_SIMPLIFY_ENDPOINT = "/api/simplify"
 API_PATIENT_SUMMARY_ENDPOINT = "/api/analyze/patient-summary"
+API_SPEAKER_ENDPOINT = "/api/analyze/speaker"
 
 # Whitelist of client-log levels that map to logger methods.
 _CLIENT_LOG_LEVELS = {"debug", "info", "warning", "error"}
@@ -155,6 +157,7 @@ conversation_analyzer = ConversationAnalyzer(search_service=search_service)
 pronunciation_assessor = PronunciationAssessor()
 transcript_simplifier = TranscriptSimplifier()
 patient_summary_generator = PatientSummaryGenerator()
+speaker_attributor = SpeakerAttributor()
 voice_proxy_handler = VoiceProxyHandler(agent_manager, scenario_manager)
 
 # Wire admin content-management routes and hot-reload caches so trainer edits
@@ -1088,6 +1091,41 @@ def generate_patient_summary():
         return jsonify(summary)
     except Exception as e:
         logger.exception("Patient summary generation failed")
+        return jsonify({"error": str(e)}), HTTP_INTERNAL_SERVER_ERROR
+    finally:
+        loop.close()
+
+
+@app.route(API_SPEAKER_ENDPOINT, methods=["POST"])
+def attribute_speaker():
+    """Classify a single utterance as patient or clinician.
+
+    Body: { "text": str, "context": list[{speaker, text}] }
+    """
+    data = cast(Dict[str, Any], request.json or {})
+    text = cast(str, data.get("text", "")).strip()
+    if not text:
+        return jsonify({"error": "text is required"}), HTTP_BAD_REQUEST
+
+    context_raw = cast(List[Any], data.get("context") or [])
+    context: List[Dict[str, str]] = [
+        {
+            "speaker": str(cast(Dict[str, Any], item).get("speaker", "")),
+            "text": str(cast(Dict[str, Any], item).get("text", "")),
+        }
+        for item in context_raw
+        if isinstance(item, dict)
+    ]
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        result = loop.run_until_complete(speaker_attributor.attribute(text, context))
+        if result is None:
+            return jsonify({"speaker": "patient", "confidence": 0.0})
+        return jsonify(result)
+    except Exception as e:
+        logger.exception("Speaker attribution failed")
         return jsonify({"error": str(e)}), HTTP_INTERNAL_SERVER_ERROR
     finally:
         loop.close()

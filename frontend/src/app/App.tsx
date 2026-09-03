@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-    Button,
-    Dialog,
-    DialogBody,
-    DialogSurface,
-    makeStyles,
-    Spinner,
-    Text,
-    tokens,
+  Button,
+  Dialog,
+  DialogBody,
+  DialogSurface,
+  makeStyles,
+  Spinner,
+  Text,
+  tokens,
 } from '@fluentui/react-components'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AssessmentPanel } from '../components/AssessmentPanel'
@@ -24,9 +24,9 @@ import { ProviderRubricPanel } from '../components/ProviderRubricPanel'
 import { ScenarioList } from '../components/ScenarioList'
 import { UserHeader } from '../components/UserHeader'
 import {
-    AvatarConnectionDiagnostics,
-    ConnectionStage,
-    VideoPanel,
+  AvatarConnectionDiagnostics,
+  ConnectionStage,
+  VideoPanel,
 } from '../components/VideoPanel'
 import { useAudioPlayer } from '../hooks/useAudioPlayer'
 import { useAuth } from '../hooks/useAuth'
@@ -159,6 +159,7 @@ export default function App() {
   const [patientLanguage, setPatientLanguage] = useState<string>('en')
   const [readingLevel, setReadingLevel] = useState<ReadingLevel>('plain')
   const [simplifiedEntries, setSimplifiedEntries] = useState<SimplifiedTranscriptEntry[]>([])
+  const attributedContextRef = useRef<Array<{ speaker: 'doctor' | 'patient'; text: string }>>([])
   const [patientSummary, setPatientSummary] = useState<PatientSummary | null>(null)
   const [providerAssessment, setProviderAssessment] = useState<Assessment | null>(null)
 
@@ -352,29 +353,47 @@ export default function App() {
     onMessage: handleWebRTCMessage,
     onAudioDelta: playAudio,
     onTranscript: useCallback(
-      (role: 'user' | 'assistant', text: string) => {
-        const speaker = role === 'assistant' ? 'doctor' : 'patient'
+      (_role: 'user' | 'assistant', text: string) => {
+        // Voice Live does not tag speakers, so start every entry as "patient"
+        // and let the attributor upgrade it once the LLM classifies the turn.
         const entry: SimplifiedTranscriptEntry = {
           id: `${Date.now()}-${Math.random()}`,
-          speaker,
+          speaker: 'patient',
           originalText: text,
           simplifiedText: text,
           timestamp: new Date(),
         }
         setSimplifiedEntries(prev => [...prev, entry])
 
-        if (text.trim()) {
-          api
-            .simplifyTranscript(text, readingLevel, patientLanguage)
-            .then(simplified => {
-              setSimplifiedEntries(prev =>
-                prev.map(e => (e.id === entry.id ? { ...e, simplifiedText: simplified } : e))
-              )
-            })
-            .catch(() => {
-              // simplification is best-effort; keep original text if it fails
-            })
-        }
+        if (!text.trim()) return
+
+        api
+          .simplifyTranscript(text, readingLevel, patientLanguage)
+          .then(simplified => {
+            setSimplifiedEntries(prev =>
+              prev.map(e => (e.id === entry.id ? { ...e, simplifiedText: simplified } : e))
+            )
+          })
+          .catch(() => {
+            // simplification is best-effort; keep original text if it fails
+          })
+
+        const context = attributedContextRef.current.slice(-8)
+        api
+          .attributeSpeaker(text, context)
+          .then(result => {
+            const speaker: 'doctor' | 'patient' = result?.speaker === 'doctor' ? 'doctor' : 'patient'
+            attributedContextRef.current = [...attributedContextRef.current, { speaker, text }]
+            setSimplifiedEntries(prev =>
+              prev.map(e => (e.id === entry.id ? { ...e, speaker } : e))
+            )
+          })
+          .catch(() => {
+            attributedContextRef.current = [
+              ...attributedContextRef.current,
+              { speaker: 'patient', text },
+            ]
+          })
       },
       [patientLanguage, readingLevel]
     ),
@@ -419,6 +438,9 @@ export default function App() {
     }
 
     setStartVisitError(null)
+
+    setSimplifiedEntries([])
+    attributedContextRef.current = []
 
     const parsedAvatar = parseAvatarValue('audio-only')
     const isAudioOnly = true
@@ -536,9 +558,20 @@ export default function App() {
     setIsGeneratingSummary(true)
 
     try {
-      const transcript = recordings.conversation
-        .map((m: any) => `${m.role}: ${m.content}`)
-        .join('\n')
+      const attributed = attributedContextRef.current
+      const transcript = attributed.length
+        ? attributed
+            .map(turn => `${turn.speaker === 'doctor' ? 'clinician' : 'patient'}: ${turn.text}`)
+            .join('\n')
+        : recordings.conversation
+            .map((m: any) => `${m.role}: ${m.content}`)
+            .join('\n')
+      const attributedMessages = attributed.length
+        ? attributed.map(turn => ({
+            role: turn.speaker === 'doctor' ? 'assistant' : 'user',
+            content: turn.text,
+          }))
+        : recordings.conversation
       const visitTypeName =
         scenarios.find(s => s.id === selectedScenario)?.name ?? 'General Consultation'
       const conversationId = currentAgent
@@ -551,7 +584,7 @@ export default function App() {
           selectedScenario,
           transcript,
           [],
-          recordings.conversation,
+          attributedMessages,
           conversationId,
           currentAgent
         ),
@@ -740,7 +773,11 @@ export default function App() {
             connected={connected}
             canAnalyze={messages.length > 0 && !recording}
             onToggleRecording={toggleRecording}
-            onClear={clearMessages}
+            onClear={() => {
+              clearMessages()
+              setSimplifiedEntries([])
+              attributedContextRef.current = []
+            }}
             onAnalyze={handleEndVisit}
             scenario={activeScenario}
             avatarEnabled={showAvatar}

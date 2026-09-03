@@ -305,6 +305,23 @@ export const api = {
     return (data.simplified_text as string) ?? text
   },
 
+  async attributeSpeaker(
+    text: string,
+    context: Array<{ speaker: 'doctor' | 'patient'; text: string }>
+  ): Promise<{ speaker: 'doctor' | 'patient'; confidence: number } | null> {
+    try {
+      const res = await fetch('/api/analyze/speaker', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, context }),
+      })
+      if (!res.ok) return null
+      return await res.json()
+    } catch {
+      return null
+    }
+  },
+
   async generatePatientSummary(
     transcript: string,
     patientLanguage: string = 'en',

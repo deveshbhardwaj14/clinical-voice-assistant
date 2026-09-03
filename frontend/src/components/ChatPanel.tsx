@@ -176,17 +176,7 @@ export function ChatPanel({
               .slice()
               .reverse()
               .map(msg => (
-                <div
-                  key={msg.id}
-                  className={`${styles.message} ${
-                    msg.role === 'user'
-                      ? styles.userMessage
-                      : styles.assistantMessage
-                  }`}
-                >
-                  <Text className={styles.label}>
-                    {msg.role === 'user' ? 'Patient' : 'Clinician'}
-                  </Text>
+                <div key={msg.id} className={styles.message}>
                   <Text size={300}>{msg.content}</Text>
                 </div>
               ))}
