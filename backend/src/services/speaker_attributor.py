@@ -26,11 +26,19 @@ SPEAKER_ATTRIBUTION_RETRY_ATTEMPTS = 2
 MAX_CONTEXT_TURNS = 8
 
 _SYSTEM_PROMPT = (
-    "You classify one utterance from a live clinical visit as either the patient "
-    "or the clinician (doctor, nurse, or other provider). Use the prior turns as "
-    "context. Cues for the clinician: medical terminology, ordering tests, giving "
-    "instructions, asking clinical history questions. Cues for the patient: "
-    "describing symptoms, personal history, feelings, or answering questions. "
+    "You classify one utterance from a live clinical visit as either the "
+    "patient or the clinician (doctor, nurse, or other provider). "
+    "Use the prior turns as strong context. In a real visit the two speakers "
+    "usually alternate, so if the previous turn was the patient the next is "
+    "likely the clinician, and vice versa — unless the content clearly says "
+    "otherwise.\n"
+    "Cues for clinician: medical terminology, diagnoses, ordering tests, "
+    "asking clinical history questions ('when did it start', 'any allergies'), "
+    "giving instructions or reassurance, discussing dosages or follow-up.\n"
+    "Cues for patient: describing symptoms in lay terms ('it hurts here', 'I "
+    "feel dizzy'), personal history, feelings, worries, answering questions.\n"
+    "If the utterance is a short greeting, filler, or ambiguous, use the "
+    "alternation heuristic. Never default to patient without reason. "
     "Return only the JSON response requested."
 )
 

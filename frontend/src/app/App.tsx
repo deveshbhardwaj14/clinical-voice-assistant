@@ -379,20 +379,33 @@ export default function App() {
           })
 
         const context = attributedContextRef.current.slice(-8)
+        const lastSpeaker = () => {
+          const arr = attributedContextRef.current
+          return arr.length ? arr[arr.length - 1].speaker : undefined
+        }
         api
           .attributeSpeaker(text, context)
           .then(result => {
-            const speaker: 'doctor' | 'patient' = result?.speaker === 'doctor' ? 'doctor' : 'patient'
+            let speaker: 'doctor' | 'patient'
+            if (result?.speaker === 'doctor' || result?.speaker === 'patient') {
+              speaker = result.speaker
+            } else {
+              speaker = lastSpeaker() === 'patient' ? 'doctor' : 'patient'
+            }
             attributedContextRef.current = [...attributedContextRef.current, { speaker, text }]
             setSimplifiedEntries(prev =>
               prev.map(e => (e.id === entry.id ? { ...e, speaker } : e))
             )
           })
           .catch(() => {
+            const speaker: 'doctor' | 'patient' = lastSpeaker() === 'patient' ? 'doctor' : 'patient'
             attributedContextRef.current = [
               ...attributedContextRef.current,
-              { speaker: 'patient', text },
+              { speaker, text },
             ]
+            setSimplifiedEntries(prev =>
+              prev.map(e => (e.id === entry.id ? { ...e, speaker } : e))
+            )
           })
       },
       [patientLanguage, readingLevel]
