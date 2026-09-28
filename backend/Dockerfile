@@ -9,7 +9,7 @@
 # pass `--build-arg REGISTRY=docker.io --build-arg NODE_IMAGE=library/node:20-alpine`.
 ARG REGISTRY=mcr.microsoft.com
 ARG NODE_IMAGE=devcontainers/javascript-node:20
-ARG PYTHON_IMAGE=devcontainers/python:3.11-bullseye
+ARG PYTHON_IMAGE=devcontainers/python:3.11-bookworm
 
 FROM ${REGISTRY}/${NODE_IMAGE} AS frontend-builder
 
@@ -43,10 +43,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PYTHONPATH=/app
 
-# The mcr.microsoft.com/devcontainers/python:3.11-bullseye image ships with a
-# yarnpkg apt source whose signing key is no longer trusted by current apt.
-# We don't need yarn at runtime, so drop the source before `apt-get update` to
-# avoid a hard failure on `NO_PUBKEY 62D54FD4003F6525` / unsigned repository.
+# The devcontainers/python image ships with a yarnpkg apt source whose signing
+# key is no longer trusted by current apt. We don't need yarn at runtime, so
+# drop the source before `apt-get update` to avoid a hard failure on
+# `NO_PUBKEY 62D54FD4003F6525` / unsigned repository.
 RUN rm -f /etc/apt/sources.list.d/yarn.list \
     && apt-get update && apt-get install -y \
     build-essential \

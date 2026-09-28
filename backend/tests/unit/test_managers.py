@@ -192,7 +192,7 @@ class TestScenarioManager:
         assert scenario is None
 
     def test_list_scenarios(self):
-        """Test listing scenarios."""
+        """list_scenarios exposes only the default general patient visit for the runtime UI."""
         manager = ScenarioManager()
         manager.scenarios = {
             "scenario1": {"name": "Scenario 1", "description": "First scenario"},
@@ -200,9 +200,8 @@ class TestScenarioManager:
         }
 
         scenarios = manager.list_scenarios()
-        assert len(scenarios) == 2
-        assert scenarios[0]["id"] == "scenario1"
-        assert scenarios[1]["id"] == "scenario2"
+        assert len(scenarios) == 1
+        assert scenarios[0]["id"] == "general-patient-visit"
 
     @patch("src.services.managers.config")
     def test_health_no_cosmos_when_endpoint_missing(self, mock_config):

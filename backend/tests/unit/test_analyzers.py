@@ -189,7 +189,7 @@ class TestConversationAnalyzer:
         assert messages[0]["role"] == "system"
         assert messages[1]["role"] == "user"
         assert messages[1]["content"] == prompt
-        assert "expert sales conversation evaluator" in messages[0]["content"]
+        assert "expert medical communication coach" in messages[0]["content"]
 
     # pylint: disable=R0801
     def test_analyze_conversation_with_openai_client(self):
