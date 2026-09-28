@@ -4,18 +4,23 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-    Badge,
-    Card,
-    CardHeader,
-    ProgressBar,
-    Tab,
-    TabList,
-    Text,
-    makeStyles,
-    tokens,
+  Badge,
+  Card,
+  CardHeader,
+  ProgressBar,
+  Tab,
+  TabList,
+  Text,
+  makeStyles,
+  tokens,
 } from '@fluentui/react-components'
 import { useState } from 'react'
-import { Assessment, CriterionScore, Improvement, ImprovementEntry } from '../types'
+import {
+  Assessment,
+  CriterionScore,
+  Improvement,
+  ImprovementEntry,
+} from '../types'
 
 interface Props {
   assessment: Assessment
@@ -34,14 +39,20 @@ const CRITERION_LABELS: Record<string, string> = {
 }
 
 // ProgressBar accepts 'error'; Badge accepts 'danger' — kept separate
-function progressColor(score: number, max: number): 'success' | 'warning' | 'error' {
+function progressColor(
+  score: number,
+  max: number
+): 'success' | 'warning' | 'error' {
   const pct = max > 0 ? score / max : 0
   if (pct >= 0.8) return 'success'
   if (pct >= 0.5) return 'warning'
   return 'error'
 }
 
-function badgeColor(score: number, max: number): 'success' | 'warning' | 'danger' {
+function badgeColor(
+  score: number,
+  max: number
+): 'success' | 'warning' | 'danger' {
   const pct = max > 0 ? score / max : 0
   if (pct >= 0.8) return 'success'
   if (pct >= 0.5) return 'warning'
@@ -113,30 +124,46 @@ const useStyles = makeStyles({
   },
 })
 
-function isStructuredImprovement(entry: ImprovementEntry): entry is Improvement {
+function isStructuredImprovement(
+  entry: ImprovementEntry
+): entry is Improvement {
   return typeof entry === 'object' && 'recommendation' in entry
 }
 
 export function ProviderRubricPanel({ assessment }: Props) {
   const styles = useStyles()
-  const [tab, setTab] = useState<'scores' | 'strengths' | 'improvements'>('scores')
+  const [tab, setTab] = useState<'scores' | 'strengths' | 'improvements'>(
+    'scores'
+  )
 
   const ai = assessment.ai_assessment
   const scoringError = assessment.diagnostics?.scoring_error
 
   if (!ai) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacingVerticalS }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: tokens.spacingVerticalS,
+        }}
+      >
         <Text style={{ color: tokens.colorNeutralForeground3 }}>
           Provider rubric not available.
         </Text>
         {scoringError ? (
-          <Text style={{ color: tokens.colorPaletteRedForeground1, whiteSpace: 'pre-wrap' }}>
+          <Text
+            style={{
+              color: tokens.colorPaletteRedForeground1,
+              whiteSpace: 'pre-wrap',
+            }}
+          >
             {scoringError}
           </Text>
         ) : (
           <Text style={{ color: tokens.colorNeutralForeground3 }}>
-            The conversation analysis did not return a rubric score for this visit.
+            The conversation analysis did not return a rubric score for this
+            visit.
           </Text>
         )}
       </div>
@@ -152,7 +179,11 @@ export function ProviderRubricPanel({ assessment }: Props) {
   return (
     <div className={styles.root}>
       <div className={styles.scoreHeader}>
-        <Text size={300} weight="semibold" style={{ color: tokens.colorNeutralForeground2 }}>
+        <Text
+          size={300}
+          weight="semibold"
+          style={{ color: tokens.colorNeutralForeground2 }}
+        >
           Provider Communication Score
         </Text>
         <div className={styles.scoreRow}>
@@ -204,9 +235,14 @@ export function ProviderRubricPanel({ assessment }: Props) {
                       {c.score} / {max}
                     </Badge>
                   </div>
-                  <ProgressBar value={c.score / max} color={progressColor(c.score, max)} />
+                  <ProgressBar
+                    value={c.score / max}
+                    color={progressColor(c.score, max)}
+                  />
                   {c.justification && (
-                    <Text className={styles.explanation}>{c.justification}</Text>
+                    <Text className={styles.explanation}>
+                      {c.justification}
+                    </Text>
                   )}
                 </div>
               )
@@ -221,7 +257,9 @@ export function ProviderRubricPanel({ assessment }: Props) {
 
       {tab === 'strengths' && (
         <Card>
-          <CardHeader header={<Text weight="semibold">Communication Strengths</Text>} />
+          <CardHeader
+            header={<Text weight="semibold">Communication Strengths</Text>}
+          />
           {ai.strengths && ai.strengths.length > 0 ? (
             <div className={styles.strengthsList}>
               {ai.strengths.map((s, i) => (
@@ -243,7 +281,14 @@ export function ProviderRubricPanel({ assessment }: Props) {
 
       {tab === 'improvements' && (
         <div>
-          <Text size={200} style={{ color: tokens.colorNeutralForeground3, marginBottom: tokens.spacingVerticalS, display: 'block' }}>
+          <Text
+            size={200}
+            style={{
+              color: tokens.colorNeutralForeground3,
+              marginBottom: tokens.spacingVerticalS,
+              display: 'block',
+            }}
+          >
             Sorted by lowest score — highest coaching priority first.
           </Text>
           {ai.improvements && ai.improvements.length > 0 ? (
@@ -251,11 +296,23 @@ export function ProviderRubricPanel({ assessment }: Props) {
               <div key={i} className={styles.improvementCard}>
                 {isStructuredImprovement(entry) ? (
                   <>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: tokens.spacingHorizontalS }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: tokens.spacingHorizontalS,
+                      }}
+                    >
                       <Text weight="semibold">
-                        {CRITERION_LABELS[entry.criterion_id ?? entry.criterion] ?? entry.criterion}
+                        {CRITERION_LABELS[
+                          entry.criterion_id ?? entry.criterion
+                        ] ?? entry.criterion}
                       </Text>
-                      <Badge color={badgeColor(entry.score, entry.max_score)} appearance="outline" size="small">
+                      <Badge
+                        color={badgeColor(entry.score, entry.max_score)}
+                        appearance="outline"
+                        size="small"
+                      >
                         {entry.score} / {entry.max_score}
                       </Badge>
                     </div>

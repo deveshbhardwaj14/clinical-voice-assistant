@@ -97,9 +97,7 @@ class SpeakerAttributor:
             f"{text}"
         )
 
-    async def attribute(
-        self, text: str, context: Optional[List[Dict[str, str]]] = None
-    ) -> Optional[Dict[str, Any]]:
+    async def attribute(self, text: str, context: Optional[List[Dict[str, str]]] = None) -> Optional[Dict[str, Any]]:
         """Return ``{speaker, confidence}`` for a single utterance, or ``None`` on failure."""
         if not text.strip():
             return None

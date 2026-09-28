@@ -155,13 +155,17 @@ export function PatientTranscriptPanel({ entries, isListening }: Props) {
             <Card
               key={entry.id}
               className={`${styles.entryCard} ${
-                entry.speaker === 'doctor' ? styles.doctorCard : styles.patientCard
+                entry.speaker === 'doctor'
+                  ? styles.doctorCard
+                  : styles.patientCard
               }`}
             >
               <Text className={styles.speakerLabel}>
                 {entry.speaker === 'doctor' ? 'Clinician' : 'Patient'}
               </Text>
-              <Text className={styles.simplifiedText}>{entry.simplifiedText}</Text>
+              <Text className={styles.simplifiedText}>
+                {entry.simplifiedText}
+              </Text>
               {entry.simplifiedText !== entry.originalText && (
                 <Text className={styles.originalText}>
                   Original: {entry.originalText}

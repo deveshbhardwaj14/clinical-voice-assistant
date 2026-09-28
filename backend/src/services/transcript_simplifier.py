@@ -63,7 +63,8 @@ class TranscriptSimplifier:
     def _build_user_prompt(self, text: str, reading_level: str, target_language: str) -> str:
         level_instruction = READING_LEVEL_INSTRUCTIONS.get(reading_level, READING_LEVEL_INSTRUCTIONS["plain"])
         lang_instruction = (
-            "" if target_language.lower() in ("en", "english", "en-us")
+            ""
+            if target_language.lower() in ("en", "english", "en-us")
             else f" Then translate the simplified text into {target_language}."
         )
         return f"{level_instruction}{lang_instruction}\n\nText to simplify:\n{text}"

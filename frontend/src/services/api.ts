@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-    Assessment,
-    AVATAR_OPTIONS,
-    ConversationDetailData,
-    ConversationListResponse,
-    PatientSummary,
-    Scenario,
+  Assessment,
+  AVATAR_OPTIONS,
+  ConversationDetailData,
+  ConversationListResponse,
+  PatientSummary,
+  Scenario,
 } from '../types'
 
 const MAX_LEGACY_ANALYZE_AUDIO_PAYLOAD_CHARS = 60000

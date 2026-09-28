@@ -424,19 +424,23 @@ class ScenarioManager:
         and suppresses legacy support-scenario titles from backend seed data.
         """
         if not self.scenarios:
-            return [{
-                "id": DEFAULT_GENERAL_PATIENT_SCENARIO["id"],
-                "name": DEFAULT_GENERAL_PATIENT_SCENARIO["name"],
-                "description": DEFAULT_GENERAL_PATIENT_SCENARIO["description"],
-            }]
+            return [
+                {
+                    "id": DEFAULT_GENERAL_PATIENT_SCENARIO["id"],
+                    "name": DEFAULT_GENERAL_PATIENT_SCENARIO["name"],
+                    "description": DEFAULT_GENERAL_PATIENT_SCENARIO["description"],
+                }
+            ]
 
         default_scenario = self.get_scenario("general-patient-visit")
         if default_scenario:
-            return [{
-                "id": default_scenario["id"],
-                "name": default_scenario["name"],
-                "description": default_scenario["description"],
-            }]
+            return [
+                {
+                    "id": default_scenario["id"],
+                    "name": default_scenario["name"],
+                    "description": default_scenario["description"],
+                }
+            ]
 
         return [
             {

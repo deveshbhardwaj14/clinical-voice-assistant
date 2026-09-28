@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-    Button,
-    Dialog,
-    DialogBody,
-    DialogSurface,
-    makeStyles,
-    Spinner,
-    Text,
-    tokens,
+  Button,
+  Dialog,
+  DialogBody,
+  DialogSurface,
+  makeStyles,
+  Spinner,
+  Text,
+  tokens,
 } from '@fluentui/react-components'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AssessmentPanel } from '../components/AssessmentPanel'
@@ -24,9 +24,9 @@ import { ProviderRubricPanel } from '../components/ProviderRubricPanel'
 import { ScenarioList } from '../components/ScenarioList'
 import { UserHeader } from '../components/UserHeader'
 import {
-    AvatarConnectionDiagnostics,
-    ConnectionStage,
-    VideoPanel,
+  AvatarConnectionDiagnostics,
+  ConnectionStage,
+  VideoPanel,
 } from '../components/VideoPanel'
 import { useAudioPlayer } from '../hooks/useAudioPlayer'
 import { useAuth } from '../hooks/useAuth'
@@ -35,9 +35,20 @@ import { useRecorder } from '../hooks/useRecorder'
 import { useScenarios } from '../hooks/useScenarios'
 import { useWebRTC } from '../hooks/useWebRTC'
 import { api, AvatarConfig, parseAvatarValue } from '../services/api'
-import { Assessment, PATIENT_LANGUAGES, PatientSummary, ReadingLevel, SimplifiedTranscriptEntry } from '../types'
+import {
+  Assessment,
+  PATIENT_LANGUAGES,
+  PatientSummary,
+  ReadingLevel,
+  SimplifiedTranscriptEntry,
+} from '../types'
 
-type AppView = 'setup' | 'practice' | 'results' | 'conversations' | 'conversationDetail'
+type AppView =
+  | 'setup'
+  | 'practice'
+  | 'results'
+  | 'conversations'
+  | 'conversationDetail'
 const RELEASE_VERSION = 'v0.0.2'
 
 const useStyles = makeStyles({
@@ -158,10 +169,17 @@ export default function App() {
   // Clinical session state
   const [patientLanguage, setPatientLanguage] = useState<string>('en')
   const [readingLevel, setReadingLevel] = useState<ReadingLevel>('plain')
-  const [simplifiedEntries, setSimplifiedEntries] = useState<SimplifiedTranscriptEntry[]>([])
-  const attributedContextRef = useRef<Array<{ speaker: 'doctor' | 'patient'; text: string }>>([])
-  const [patientSummary, setPatientSummary] = useState<PatientSummary | null>(null)
-  const [providerAssessment, setProviderAssessment] = useState<Assessment | null>(null)
+  const [simplifiedEntries, setSimplifiedEntries] = useState<
+    SimplifiedTranscriptEntry[]
+  >([])
+  const attributedContextRef = useRef<
+    Array<{ speaker: 'doctor' | 'patient'; text: string }>
+  >([])
+  const [patientSummary, setPatientSummary] = useState<PatientSummary | null>(
+    null
+  )
+  const [providerAssessment, setProviderAssessment] =
+    useState<Assessment | null>(null)
 
   const { authenticated, user, isTrainer } = useAuth()
 
@@ -370,7 +388,9 @@ export default function App() {
           .simplifyTranscript(text, readingLevel, patientLanguage)
           .then(simplified => {
             setSimplifiedEntries(prev =>
-              prev.map(e => (e.id === entry.id ? { ...e, simplifiedText: simplified } : e))
+              prev.map(e =>
+                e.id === entry.id ? { ...e, simplifiedText: simplified } : e
+              )
             )
           })
           .catch(() => {
@@ -391,13 +411,17 @@ export default function App() {
             } else {
               speaker = lastSpeaker() === 'patient' ? 'doctor' : 'patient'
             }
-            attributedContextRef.current = [...attributedContextRef.current, { speaker, text }]
+            attributedContextRef.current = [
+              ...attributedContextRef.current,
+              { speaker, text },
+            ]
             setSimplifiedEntries(prev =>
               prev.map(e => (e.id === entry.id ? { ...e, speaker } : e))
             )
           })
           .catch(() => {
-            const speaker: 'doctor' | 'patient' = lastSpeaker() === 'patient' ? 'doctor' : 'patient'
+            const speaker: 'doctor' | 'patient' =
+              lastSpeaker() === 'patient' ? 'doctor' : 'patient'
             attributedContextRef.current = [
               ...attributedContextRef.current,
               { speaker, text },
@@ -444,7 +468,9 @@ export default function App() {
       return
     }
     if (!consentConfirmed) {
-      setStartVisitError('Please confirm consent before starting the visit recording.')
+      setStartVisitError(
+        'Please confirm consent before starting the visit recording.'
+      )
       return
     }
 
@@ -522,7 +548,10 @@ export default function App() {
       const attributed = attributedContextRef.current
       const transcript = attributed.length
         ? attributed
-            .map(turn => `${turn.speaker === 'doctor' ? 'clinician' : 'patient'}: ${turn.text}`)
+            .map(
+              turn =>
+                `${turn.speaker === 'doctor' ? 'clinician' : 'patient'}: ${turn.text}`
+            )
             .join('\n')
         : recordings.conversation
             .map((m: any) => `${m.role}: ${m.content}`)
@@ -534,7 +563,8 @@ export default function App() {
           }))
         : recordings.conversation
       const visitTypeName =
-        scenarios.find(s => s.id === selectedScenario)?.name ?? 'General Consultation'
+        scenarios.find(s => s.id === selectedScenario)?.name ??
+        'General Consultation'
       const conversationId = currentAgent
         ? getConversationId()
         : await saveConversationNow()
@@ -656,7 +686,8 @@ export default function App() {
                 block
                 style={{ marginTop: tokens.spacingVerticalS }}
               >
-                Preparing patient summary and provider rubric — this may take a moment
+                Preparing patient summary and provider rubric — this may take a
+                moment
               </Text>
             </div>
           </DialogBody>
@@ -775,7 +806,12 @@ export default function App() {
           </div>
           <div className={styles.resultsPanel}>
             {analysisError ? (
-              <Text style={{ color: tokens.colorPaletteRedForeground1, whiteSpace: 'pre-wrap' }}>
+              <Text
+                style={{
+                  color: tokens.colorPaletteRedForeground1,
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
                 {analysisError}
               </Text>
             ) : providerAssessment ? (

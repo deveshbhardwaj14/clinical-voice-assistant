@@ -4,20 +4,20 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-    Badge,
-    Button,
-    Card,
-    CardHeader,
-    Text,
-    makeStyles,
-    tokens,
+  Badge,
+  Button,
+  Card,
+  CardHeader,
+  Text,
+  makeStyles,
+  tokens,
 } from '@fluentui/react-components'
 import {
-    ArrowDownloadRegular,
-    CalendarRegular,
-    ClipboardRegular,
-    NoteRegular,
-    PillRegular,
+  ArrowDownloadRegular,
+  CalendarRegular,
+  ClipboardRegular,
+  NoteRegular,
+  PillRegular,
 } from '@fluentui/react-icons'
 import { PatientSummary } from '../types'
 
@@ -130,14 +130,22 @@ export function PatientSummaryPanel({ summary, visitType, onDownload }: Props) {
         <Text className={styles.bodyText}>{summary.visit_reason}</Text>
 
         {summary.diagnosis_or_findings && (
-          <div className={styles.section} style={{ marginTop: tokens.spacingVerticalM }}>
+          <div
+            className={styles.section}
+            style={{ marginTop: tokens.spacingVerticalM }}
+          >
             <Text weight="semibold">What the doctor found:</Text>
-            <Text className={styles.bodyText}>{summary.diagnosis_or_findings}</Text>
+            <Text className={styles.bodyText}>
+              {summary.diagnosis_or_findings}
+            </Text>
           </div>
         )}
 
         {summary.what_was_discussed.length > 0 && (
-          <div className={styles.section} style={{ marginTop: tokens.spacingVerticalM }}>
+          <div
+            className={styles.section}
+            style={{ marginTop: tokens.spacingVerticalM }}
+          >
             <Text weight="semibold">Topics discussed:</Text>
             <ul className={styles.bulletList}>
               {summary.what_was_discussed.map((item, i) => (

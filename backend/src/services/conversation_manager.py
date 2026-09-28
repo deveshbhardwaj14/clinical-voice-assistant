@@ -32,8 +32,7 @@ DEFAULT_MEDBUDDY_RUBRIC: Dict[str, Any] = {
             "criterionId": "empathy",
             "name": "Empathy & Compassion",
             "description": (
-                "Warm, patient-centred tone; acknowledges emotions and lived experience without "
-                "dismissing concerns."
+                "Warm, patient-centred tone; acknowledges emotions and lived experience without " "dismissing concerns."
             ),
         },
         {
@@ -80,8 +79,7 @@ DEFAULT_MEDBUDDY_RUBRIC: Dict[str, Any] = {
             "criterionId": "clarity_of_next_steps",
             "name": "Clarity of Next Steps",
             "description": (
-                "Concrete, memorable next steps for medications, appointments, and warning "
-                "signs to watch for."
+                "Concrete, memorable next steps for medications, appointments, and warning " "signs to watch for."
             ),
         },
     ],

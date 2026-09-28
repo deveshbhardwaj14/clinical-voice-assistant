@@ -14,8 +14,12 @@ const DEFAULT_GENERAL_SCENARIO: Scenario = {
 }
 
 export function useScenarios() {
-  const [scenarios, setScenarios] = useState<Scenario[]>([DEFAULT_GENERAL_SCENARIO])
-  const [selectedScenario, setSelectedScenario] = useState<string | null>(DEFAULT_GENERAL_SCENARIO.id)
+  const [scenarios, setScenarios] = useState<Scenario[]>([
+    DEFAULT_GENERAL_SCENARIO,
+  ])
+  const [selectedScenario, setSelectedScenario] = useState<string | null>(
+    DEFAULT_GENERAL_SCENARIO.id
+  )
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 

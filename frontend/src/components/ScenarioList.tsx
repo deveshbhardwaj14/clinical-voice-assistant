@@ -3,12 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import {
-    Button,
-    Text,
-    makeStyles,
-    tokens
-} from '@fluentui/react-components'
+import { Button, Text, makeStyles, tokens } from '@fluentui/react-components'
 import { History24Regular, People24Regular } from '@fluentui/react-icons'
 import { PatientLanguageOption, ReadingLevel } from '../types'
 
@@ -203,7 +198,8 @@ export function ScenarioList({
           {appName || 'MedBuddy Visit'}
         </Text>
         <Text size={200} className={styles.subtitle}>
-          Doctor-approved patient visit capture for inclusive care and follow-up support.
+          Doctor-approved patient visit capture for inclusive care and follow-up
+          support.
         </Text>
         {visitDateTime && (
           <Text size={200} className={styles.visitDateTime}>
@@ -249,11 +245,13 @@ export function ScenarioList({
             className={styles.input}
             aria-label="Patient language"
           >
-            {(languageOptions ?? [{ code: 'en', label: 'English' }]).map(option => (
-              <option key={option.code} value={option.code}>
-                {option.label}
-              </option>
-            ))}
+            {(languageOptions ?? [{ code: 'en', label: 'English' }]).map(
+              option => (
+                <option key={option.code} value={option.code}>
+                  {option.label}
+                </option>
+              )
+            )}
           </select>
         </label>
 
@@ -263,7 +261,9 @@ export function ScenarioList({
           </Text>
           <select
             value={readingLevel}
-            onChange={event => onReadingLevelChange?.(event.target.value as ReadingLevel)}
+            onChange={event =>
+              onReadingLevelChange?.(event.target.value as ReadingLevel)
+            }
             className={styles.input}
             aria-label="Reading level"
           >
@@ -284,12 +284,16 @@ export function ScenarioList({
           className={styles.checkbox}
         />
         <Text size={200}>
-          Patient or guardian has provided consent to record and summarize this visit.
+          Patient or guardian has provided consent to record and summarize this
+          visit.
         </Text>
       </label>
 
       {startVisitError && (
-        <Text size={200} style={{ color: '#b42318', marginBottom: tokens.spacingVerticalS }}>
+        <Text
+          size={200}
+          style={{ color: '#b42318', marginBottom: tokens.spacingVerticalS }}
+        >
           {startVisitError}
         </Text>
       )}
