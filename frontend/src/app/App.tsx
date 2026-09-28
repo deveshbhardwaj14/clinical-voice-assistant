@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogSurface,
-  makeStyles,
-  Spinner,
-  Text,
-  tokens,
+    Button,
+    Dialog,
+    DialogBody,
+    DialogSurface,
+    makeStyles,
+    Spinner,
+    Text,
+    tokens,
 } from '@fluentui/react-components'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AssessmentPanel } from '../components/AssessmentPanel'
@@ -24,9 +24,9 @@ import { ProviderRubricPanel } from '../components/ProviderRubricPanel'
 import { ScenarioList } from '../components/ScenarioList'
 import { UserHeader } from '../components/UserHeader'
 import {
-  AvatarConnectionDiagnostics,
-  ConnectionStage,
-  VideoPanel,
+    AvatarConnectionDiagnostics,
+    ConnectionStage,
+    VideoPanel,
 } from '../components/VideoPanel'
 import { useAudioPlayer } from '../hooks/useAudioPlayer'
 import { useAuth } from '../hooks/useAuth'
@@ -165,8 +165,7 @@ export default function App() {
 
   const { authenticated, user, isTrainer } = useAuth()
 
-  const { scenarios, selectedScenario, setSelectedScenario, loading } =
-    useScenarios()
+  const { scenarios, selectedScenario, loading } = useScenarios()
   const { playAudio } = useAudioPlayer()
   const activeScenario = scenarios.find(s => s.id === selectedScenario) || null
 
@@ -430,7 +429,6 @@ export default function App() {
     clearRecordingError,
     toggleRecording,
     stopRecording,
-    getAudioRecording,
   } = useRecorder(sendAudioChunk)
 
   const handleStart = async (visitType: string) => {
@@ -500,56 +498,6 @@ export default function App() {
       })
     } finally {
       setStartingMicrophone(false)
-    }
-  }
-
-  const handleAnalyze = async () => {
-    if (!selectedScenario) return
-    if (recording) {
-      stopRecording()
-      setAnalysisError(
-        'Recording was still running, so the microphone was stopped. Click Analyze Performance again after recording stops.'
-      )
-      return
-    }
-
-    const recordings = getRecordings()
-    const audioData = getAudioRecording()
-
-    if (!recordings.conversation.length) return
-
-    setShowLoading(true)
-    setAnalysisError(null)
-
-    try {
-      const transcript = recordings.conversation
-        .map((m: any) => `${m.role}: ${m.content}`)
-        .join('\n')
-      const conversationId = currentAgent
-        ? getConversationId()
-        : await saveConversationNow()
-
-      const result = await api.analyzeConversation(
-        selectedScenario,
-        transcript,
-        [...audioData, ...recordings.audio],
-        recordings.conversation,
-        conversationId,
-        currentAgent
-      )
-
-      setAssessment(result)
-      setShowAssessment(true)
-    } catch (error) {
-      console.error('Analysis failed:', error)
-      const detail = error instanceof Error ? error.message : 'Unknown error'
-      const message =
-        detail.includes('403') || detail.includes('Forbidden')
-          ? 'Performance analysis was blocked before it reached the app. This usually means the gateway/WAF rejected the request size or content. Client logs include request diagnostics.'
-          : `Performance analysis failed. ${detail}`
-      setAnalysisError(message)
-    } finally {
-      setShowLoading(false)
     }
   }
 
@@ -660,9 +608,6 @@ export default function App() {
             <Spinner label="Loading scenarios..." />
           ) : (
             <ScenarioList
-              scenarios={scenarios}
-              selectedScenario={selectedScenario}
-              onSelect={setSelectedScenario}
               onStart={handleStart}
               selectedVisitType={selectedVisitType}
               onVisitTypeChange={setSelectedVisitType}

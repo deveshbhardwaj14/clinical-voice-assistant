@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-  Button,
-  Text,
-  makeStyles,
-  tokens
+    Button,
+    Text,
+    makeStyles,
+    tokens
 } from '@fluentui/react-components'
 import { History24Regular, People24Regular } from '@fluentui/react-icons'
-import { PatientLanguageOption, ReadingLevel, Scenario } from '../types'
+import { PatientLanguageOption, ReadingLevel } from '../types'
 
 const useStyles = makeStyles({
   header: {
@@ -132,9 +132,6 @@ const useStyles = makeStyles({
 })
 
 interface Props {
-  scenarios: Scenario[]
-  selectedScenario: string | null
-  onSelect: (id: string) => void
   onStart: (visitType: string) => void
   isAuthenticated?: boolean
   onNavigateToConversations?: () => void
@@ -159,9 +156,6 @@ interface Props {
 }
 
 export function ScenarioList({
-  scenarios,
-  selectedScenario,
-  onSelect,
   onStart,
   isAuthenticated,
   onNavigateToConversations,
